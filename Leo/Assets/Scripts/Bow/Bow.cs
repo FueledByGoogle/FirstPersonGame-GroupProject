@@ -17,7 +17,7 @@ public class Bow : MonoBehaviour {
     public const float releaseSpeed = 5f;
 
 	public Rigidbody arrow;
-	public const float arrowVelocity = 30f;
+	public float arrowVelocity = 20f;
 	public Transform arrowSpawnLocation;
 
     void Start () {
