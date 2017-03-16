@@ -4,28 +4,40 @@ using UnityEngine;
 
 public class Character : MonoBehaviour {
 
-	public const float maxHealth = 10f;
+	public float maxHealth = 10f;
 	public float health;
 
-	public const float walkSpeed = 1.5f;
-	public const float runSpeed = 5f;
-	public const float turnSpeed = 120f;
+	public float walkSpeed = 1f;
+	public const float runSpeed = 1.35f;
 
 	public HealthBar healthBar;	
-	public Rigidbody characterRigidBody;
+	Rigidbody characterRigidBody;
+
+
+	//Jumping
+	public Transform groundCheckTransform;
+	public bool isGrounded;
+	public float jumpSpeed = 150f;
 
 	void Start () {
 		characterRigidBody = GetComponent<Rigidbody> ();
 		health = maxHealth;
+		isGrounded = true;
 	}
-	
 
-	void Update () {
-		
+	void FixedUpdate () {
+		if (groundCheckTransform != null) {
+			isGrounded = GroundCheck ();
+		}
+	}
+
+	public void Jump () {
+		if (Input.GetKey(KeyCode.Space) && isGrounded){
+			characterRigidBody.AddForce (new Vector3 (0, jumpSpeed, 0));
+		}
 	}
 
 	public void Move (float direction, bool run) {
-
 		if (run == false) {
 			transform.Translate(Vector3.forward * direction * walkSpeed * Time.deltaTime);
 		} else {
@@ -33,21 +45,20 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	public void Rotate (bool turnRight){
-		
-		if (turnRight == true) {
-			transform.Rotate (0, turnSpeed * Time.deltaTime, 0);
-		} else {
-			transform.Rotate (0, (-1) * turnSpeed * Time.deltaTime, 0);
-		}
-
-	}
-
-	public void takeDamage (float damage){
+	public void TakeDamage (float damage){
 		health -= damage;
 		if (health < 0) {
 			health = 0;
 		}
 		healthBar.SetHealth (health, maxHealth);
+	}
+
+	public bool GroundCheck () {
+		/*We shoot a ray down with length 0.1f from the between the two feet at
+		*the groundCheckTransform to see if it hits anything.
+		*NOTE: make sure groundCheckTransform is close to the ground, otherwise ray will fall short of the ground
+		*/
+		isGrounded = Physics.Raycast (groundCheckTransform.position, Vector3.down, 0.05f);
+		return isGrounded;
 	}
 }

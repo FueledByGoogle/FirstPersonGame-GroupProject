@@ -67,11 +67,6 @@ public class Bow : MonoBehaviour {
 		return arrowSpawnLocation.position;
 	}
 
-	//TODO: this won't be needed after orientation of bow is fixed
-	public Quaternion BowRotation () {
-		return arrowSpawnLocation.rotation;
-	}
-
 	public void Fire() {
 		Rigidbody arrowFired = Instantiate (arrow, arrowSpawnLocation.position, arrowSpawnLocation.rotation) as Rigidbody;
 		arrowFired.velocity = arrowVelocity * arrowSpawnLocation.forward * -1;

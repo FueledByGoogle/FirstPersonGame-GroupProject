@@ -5,27 +5,19 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	Character character;
+	public Character character;
 	public Camera ThirdPerson;
 	public Camera FirstPerson;
 	public Animation Animations;
-	public GameObject PlayerGroupLocator;		//We will need to attach the grouplocater to this, so we can disable it when using the bow
-	public float strafeSpeed = 2f;
-	private bool attacking;
+	public GameObject PlayerGroupLocator;			//We will need to attach the grouplocater to this, so we can disable it when using the bow
+	public const float strafeSpeed = 2f;
 
 	public Bow bow;
-	public GameObject Archery;			//Used to hide archery related elements when not using the bow
-	public GameObject fakeArrow;		//Fake arrow only displayed when player clicks Fire and bow begins to draw
+	public GameObject Archery;						//Used to hide archery related elements when not using the bow
+	public GameObject fakeArrow;					//Fake arrow only displayed when player clicks Fire and bow begins to draw
 	public bool usingBow;
 	public bool arrowDrawn;
-	public SkinnedMeshRenderer playerMeshRenderer;
-
-	//Jumping
-	public Transform groundCheckTransform;
-	private bool isGrounded;
-	public float jumpSpeed = 100f;
-
-
+	public SkinnedMeshRenderer playerMeshRenderer;	//Used to disable render of player so camera doesn't see player when using bow
 
 	void Start () {
 		character = GetComponent<Character> ();
@@ -48,13 +40,13 @@ public class PlayerController : MonoBehaviour {
 
 	void FixedUpdate () {
 		PlayerControl ();
-		isGrounded = IsGrounded ();
+
 	}
 
 	private void PlayerControl (){
 		
 		if (usingBow == true) {
-			playerMeshRenderer.enabled = false;	//render of player has to be disabled in order to see the bow and have no playerbody showing through
+			playerMeshRenderer.enabled = false;		//render of player has to be disabled in order to see the bow and have no playerbody showing through
 			PlayerGroupLocator.SetActive (false);
 		} else {
 			PlayerGroupLocator.SetActive (true);
@@ -67,13 +59,13 @@ public class PlayerController : MonoBehaviour {
 
 			if (Input.GetMouseButton (1)) {
 				
-				ThirdPerson.enabled = false;	//switching between cameras
+				ThirdPerson.enabled = false;		//switching between cameras
 				FirstPerson.enabled = true;
 				usingBow = true;
 
 			} else {
 				
-				if (ThirdPerson.enabled != true) {//This check probably doesn't matter but skips setting FirstPerson camera to enabled each time
+				if (ThirdPerson.enabled != true) {	//This check probably doesn't matter but skips setting FirstPerson camera to enabled each time
 					ThirdPerson.enabled = true;
 					FirstPerson.enabled = false;
 				}
@@ -84,11 +76,10 @@ public class PlayerController : MonoBehaviour {
 			Bow ();
 		}
 			
-		if (Input.GetMouseButton (0)) {
+		if (Input.GetMouseButton (0) && usingBow == false) {
+			/*	TODO: Sword is only trigger when player left clicking
+			 */
 			Animations.Play ("Attack");
-			attacking = true;
-		} else {
-			attacking = false;
 		}
 
 		Movement ();
@@ -97,24 +88,12 @@ public class PlayerController : MonoBehaviour {
 
 	void Bow() {
 
-		//Allow strafing when using the bow
-		float vertical = Input.GetAxis ("Vertical") * strafeSpeed * Time.deltaTime;
-		float horizontal = Input.GetAxis ("Horizontal") * strafeSpeed * Time.deltaTime;
-		character.transform.Translate (horizontal, 0, vertical);
-
 		playerMeshRenderer.enabled = false;		//Don't render playerbody when using bow, so we can make bow closer to the camera view without seeing it in first person
 		Archery.SetActive (true);
 
 		if (arrowDrawn == false && bow.stretching == false) {	//This prevents an arrow from appearing on initial active of bow
 			fakeArrow.SetActive (false);
 		}
-
-//		//if we are using the bow press "S" to exit shooting mode
-//		if (Input.GetKey(KeyCode.S)) {
-//			ThirdPerson.enabled = true;
-//			FirstPerson.enabled = false;
-//			usingBow = false;
-//		}
 
 		//Go back to using melee
 		if (Input.GetKeyDown("1")) {
@@ -123,7 +102,8 @@ public class PlayerController : MonoBehaviour {
 			usingBow = false;
 		}
 
-		if (Input.GetMouseButton (0)) {			//Shooting
+		//Shooting
+		if (Input.GetMouseButton (0)) {			
 			//When arrow is not drawn and player wants to draw arrow, display the fakeArrow
 			if (arrowDrawn == false && bow.releasing == false) {
 				fakeArrow.SetActive (false);
@@ -141,17 +121,24 @@ public class PlayerController : MonoBehaviour {
 				bow.Release ();
 				arrowDrawn = false;
 			}
-		} else if (attacking == false) {
-			Animations.Play ("Wait");
 		}	
 	}
 
 	void Movement () {
-		Jump ();
+		
+		character.Jump ();
+		/*TODO: Implement strafing where moving forward and sideways 
+		 * will be normalized so walking sideways and forwards at the same time
+		 * isn't faster.
+		 */
 
-		if (Input.GetKey (KeyCode.W)) {			//Forward Movement
+		if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A)) {
+			Strafe ();
+			Animations.Play ("Walk");
+		} else if (Input.GetKey (KeyCode.W)) {			//Forward Movement
 
-			if (Input.GetKey (KeyCode.LeftShift) && isGrounded == true && usingBow == false) {
+//			if (Input.GetKey (KeyCode.LeftShift) && character.isGrounded == true && usingBow == false && attacking == false) {
+			if (Input.GetKey (KeyCode.LeftShift) && usingBow == false) {
 				Run ();
 				character.Move (1f, true);
 			} else {
@@ -161,7 +148,8 @@ public class PlayerController : MonoBehaviour {
 
 		} else if (Input.GetKey (KeyCode.S)) {	//Backwards Movement
 
-			if (Input.GetKey (KeyCode.LeftShift) && isGrounded == true && usingBow == false) {
+//			if (Input.GetKey (KeyCode.LeftShift) && character.isGrounded == true && usingBow == false && attacking == false) {
+			if (Input.GetKey (KeyCode.LeftShift)  && usingBow == false) {
 				Run ();
 				character.Move (-1f, true);
 			} else {
@@ -169,35 +157,32 @@ public class PlayerController : MonoBehaviour {
 				character.Move (-1f, false);
 			}
 
+		} 
+		/* TODO: Only wait when finshed attack animation, otherwise animation is messed up
+		 */
+		else if (Animations.IsPlaying("Attack") == false) {
+			Animations.Play ("Wait");
 		}
 	}
-
-	void Jump () {
-		if (Input.GetKey(KeyCode.Space) && isGrounded){
-			character.characterRigidBody.AddForce (new Vector3 (0, jumpSpeed, 0));
-		}
+		
+	void Strafe() {
+		float vertical = Input.GetAxis ("Vertical") * strafeSpeed * Time.deltaTime;
+		float horizontal = Input.GetAxis ("Horizontal") * strafeSpeed * Time.deltaTime;
+		transform.Translate (horizontal, 0, vertical);
 	}
 
 	void Run (){
 		Animations ["Walk"].speed = 2.0f;
-		if (attacking == false) {
+		if (Animations.IsPlaying("Attack") == false) {
 			Animations.Play ("Walk");
 		}
 	}
-
+		
 	void Walk (){
 		Animations ["Walk"].speed = 1.0f;
-		if (attacking == false) {
+		if (Animations.IsPlaying("Attack") == false) {
 			Animations.Play ("Walk");
 		}
 	}
 
-	bool IsGrounded () {
-		/*We shoot a ray down with length 0.1f from the between the two feet at
-		*the groundCheckTransform to see if it hits anything.
-		*NOTE: make sure groundCheckTransform is close to the ground, otherwise ray will fall short of the ground
-		*/
-		isGrounded = Physics.Raycast (groundCheckTransform.position, Vector3.down, 0.1f);
-		return isGrounded;
-	}
 }

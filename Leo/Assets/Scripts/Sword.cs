@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class Sword : MonoBehaviour {
 
+	/*	TODO: Sword collider that has trigger enabled is only active
+	 * if the mouse animation is down
+	 */
+
 	public int swordDamage;
 
-	void OnTriggerEnter(Collider other) {
-		if (Input.GetMouseButton (0)) {	//only be able to hurt enemy if player is swinging the sword
-			if (other.name == "Enemy") {
-				Character enemy = other.GetComponent<Character> ();
-				enemy.takeDamage (swordDamage);
-			}
+	void OnTriggerEnter(Collider col) {
+		Character characterHit = col.gameObject.GetComponent<Character> ();
+
+		if (characterHit != null) {
+			characterHit.TakeDamage (swordDamage);
 		}
+
 	}
 }

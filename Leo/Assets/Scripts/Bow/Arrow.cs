@@ -25,12 +25,14 @@ public class Arrow : MonoBehaviour {
 		Character characterHit = col.gameObject.GetComponent<Character> ();
 
 		if (characterHit != null) {
-			characterHit.takeDamage (damage);
+			characterHit.TakeDamage (damage);
 		}
-
-		//TODO: For some reason setting trigger to false even after calling take damage
-		//negates the damage taken
-//		arrowCollider.isTrigger = false;	//So arrow doesn't just fly through walls
+		/* Using two colliders rather than disabling the trigger when using only 
+		 * one collider after the arrow has hit something to make arrow solid 
+		 * fixed the bug where damage is negated if you were only using one arrow
+		 * and disabled the trigger after it has hit something.
+		 */
+		arrowCollider.isTrigger = false;
 		Destroy (gameObject, 4f); 
 	}
 
