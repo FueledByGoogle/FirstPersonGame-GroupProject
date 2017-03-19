@@ -29,6 +29,13 @@ public class move : MonoBehaviour {
         {
             Move(-1);
         }
-
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.position += -transform.right * Time.deltaTime * 5;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.position += transform.right * Time.deltaTime * 5;
+        }
     }
 }
