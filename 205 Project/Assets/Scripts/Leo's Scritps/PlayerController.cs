@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 	public Character character;
 	private Animator animator;
 	public float moveSpeed = 1f;
+	public bool movementDisabled;
 
 	public Bow bow;
 	public GameObject archery;						//Used to hide archery related elements when not using the bow
@@ -33,6 +34,7 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 		character = GetComponent<Character> ();
 		animator = GetComponent<Animator> ();
+		movementDisabled = false;
 		//Bow related
 		usingBow = false;
 		archery.SetActive (false);
@@ -62,9 +64,12 @@ public class PlayerController : MonoBehaviour {
 			fakeArrow.SetActive (false);
 		}
 
-		if (shieldUP == false) {
+		if (shieldUP == false && movementDisabled == false) {
 			Movement ();
 		}
+
+		if (movementDisabled)
+			DisableMovementEffects ();
 
 		Bow ();
 		if (usingBow == false) {
@@ -151,10 +156,11 @@ public class PlayerController : MonoBehaviour {
 
 		}
 
-		if (Input.GetKeyUp (KeyCode.D) || Input.GetKeyUp (KeyCode.A) || 
-			Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) || 
-			character.isGrounded == false)
+		if (Input.GetKeyUp (KeyCode.D) || Input.GetKeyUp (KeyCode.A) ||
+		    Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) ||
+			!character.isGrounded) {
 			walkAudio.Stop ();
+		}
 
 
 
@@ -206,12 +212,14 @@ public class PlayerController : MonoBehaviour {
 				}
 			}
 		} 
-
-
-			
-
-
 	
+	}
+
+	/* Removes sound and walking animation when movement is diabled
+	 */
+	void DisableMovementEffects() {
+		animator.SetBool("Walking", false);
+		walkAudio.Stop ();
 	}
 
 }
