@@ -22,6 +22,7 @@ public class Bow : MonoBehaviour {
 	public Transform arrowSpawnLocation;
 
 	public AudioSource bowAudio;
+	public AudioSource arrowReleaseAudio;
 	public bool bowAudioPlayed;
 
     void Start () {
@@ -66,26 +67,17 @@ public class Bow : MonoBehaviour {
     public void Release () {
         releasing = true;
         stretching = false;
-
-//		if (!bowAudio.isPlaying) {
-//			bowAudio.Stop ();
-//			bowAudioPlayed = false;
-//		}
     }
-
-//	public Rigidbody DrawArrow (){
-//		Rigidbody arrowFired = Instantiate (arrow, arrowSpawnLocation.position, arrowSpawnLocation.rotation) as Rigidbody;
-//		return arrowFired;
-//	}
 
 	public Vector3 BowPosition () {
 		return arrowSpawnLocation.position;
 	}
 
 	public void Fire() {
-			bowAudio.Stop ();
-
+		bowAudio.Stop ();
+		arrowReleaseAudio.Stop ();
 		Rigidbody arrowFired = Instantiate (arrow, arrowSpawnLocation.position, arrowSpawnLocation.rotation) as Rigidbody;
-		arrowFired.velocity = arrowVelocity * arrowSpawnLocation.forward * -1;
+		arrowFired.velocity = arrowVelocity * arrowSpawnLocation.forward;
+		arrowReleaseAudio.Play ();
 	}
 }

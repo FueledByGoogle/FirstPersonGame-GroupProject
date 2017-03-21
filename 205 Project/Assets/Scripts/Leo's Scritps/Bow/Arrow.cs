@@ -21,6 +21,12 @@ public class Arrow : MonoBehaviour {
 		}
 	}
 
+	void FixedUpdate() {
+
+		transform.forward = Vector3.Lerp (transform.forward, arrowRigidbody.velocity.normalized, Time.deltaTime);
+
+	}
+
 	public void OnCollisionEnter (Collision col) {
 		//we need to traverse to the root of the gameobject because that's where the character
 		//script is

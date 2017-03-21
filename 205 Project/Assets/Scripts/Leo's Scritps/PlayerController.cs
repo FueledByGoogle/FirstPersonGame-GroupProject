@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+	public Camera playerCamera;
 	public Character character;
 	private Animator animator;
 	public float moveSpeed = 1f;
@@ -17,9 +18,10 @@ public class PlayerController : MonoBehaviour {
 	public GameObject lHand;
 	public bool usingBow;
 	public bool arrowDrawn;
+	bool bowZoomed;
+	float bowZoomValue = 45f;
 
 
-	public AudioSource walkAudio;
 	public AudioSource shieldUpAudio;
 
 	/*TODO: When different swords are implemented this won't work because
@@ -38,6 +40,7 @@ public class PlayerController : MonoBehaviour {
 		//Bow related
 		usingBow = false;
 		archery.SetActive (false);
+		bowZoomed = false;
 		Cursor.lockState = CursorLockMode.Locked;	//Remove cursor from player view
 	}
 
@@ -45,6 +48,7 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetKeyDown("escape")) {
 			Cursor.lockState = CursorLockMode.None;
 		}
+
 	}
 
 	void FixedUpdate () {
@@ -63,13 +67,13 @@ public class PlayerController : MonoBehaviour {
 			bow.factor = 0f;
 			fakeArrow.SetActive (false);
 		}
-
+		//Movement Disabled when shield is in use
 		if (shieldUP == false && movementDisabled == false) {
 			Movement ();
 		}
 
 		if (movementDisabled)
-			DisableMovementEffects ();
+			animator.SetBool ("Walking", false);
 
 		Bow ();
 		if (usingBow == false) {
@@ -83,23 +87,28 @@ public class PlayerController : MonoBehaviour {
 
 		if (usingBow == false) {
 
+			archery.SetActive (false);
+
+			//Graphics
 			rHand.SetActive (true);
 			lHand.SetActive (true);
 
-			archery.SetActive (false);
 
 		} else if (usingBow == true) {
 			
-			rHand.SetActive (false);
-			lHand.SetActive (false);
-
 			archery.SetActive (true);
 
+			//Graphics
+			rHand.SetActive (false);
+			lHand.SetActive (false);
 			if (arrowDrawn == false && bow.stretching == false) {	//This prevents an arrow from appearing on initial active of bow
 				fakeArrow.SetActive (false);
 			}
+
 			//Shooting
-			if (Input.GetMouseButton (0)) {			
+			if (Input.GetMouseButton (0)) {
+
+				bowZoomed = true;
 				//When arrow is not drawn and player wants to draw arrow, display the fakeArrow
 				if (arrowDrawn == false && bow.releasing == false) {
 					fakeArrow.SetActive (false);
@@ -117,7 +126,18 @@ public class PlayerController : MonoBehaviour {
 					bow.Release ();
 					arrowDrawn = false;
 				}
-			}	
+				//revert back to default F0W
+				if (bow.releasing == true) {
+					playerCamera.fieldOfView = 60f;
+					bowZoomed = false;
+				}
+			}
+			//only zoom when arrow is drawn and stretching
+			if (playerCamera.fieldOfView != bowZoomValue && bowZoomed)
+				playerCamera.fieldOfView = Mathf.Lerp (playerCamera.fieldOfView, bowZoomValue, 0.05f);
+	
+
+
 		}
 	}
 
@@ -125,18 +145,13 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetKey (KeyCode.Q)) {
 			
 			animator.SetBool ("Shield_Up", true);
-
 			if (shieldUP != true) {	//prevents audio clip from being played multiple times.
 				shieldUpAudio.Play ();
-				walkAudio.Stop ();
 			}
-
 			shieldUP = true;
 
-		} else {
-			animator.SetBool ("Shield_Up", false);
+		} else
 			shieldUP = false;
-		}
 	}
 
 	void Movement () {
@@ -146,22 +161,13 @@ public class PlayerController : MonoBehaviour {
 		 * will be normalized so walking sideways and forwards at the same time
 		 *TODO: Ability to sprint for a short amount of time
 		*/
-		if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A) || 
-			Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) {
-
+		if ((Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A) || 
+			 Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) && character.isGrounded)
 			animator.SetBool ("Walking", true);
-			if (!walkAudio.isPlaying && character.isGrounded == true) {	//Prevents same audioclip from being queued to play multiple times, results in playing even after not moving.
-				walkAudio.Play ();
-			}
-
-		}
 
 		if (Input.GetKeyUp (KeyCode.D) || Input.GetKeyUp (KeyCode.A) ||
-		    Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) ||
-			!character.isGrounded) {
-			walkAudio.Stop ();
-		}
-
+		    Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) || !character.isGrounded)
+			animator.SetBool ("Walking", false);
 
 
 		if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A)) {
@@ -191,35 +197,19 @@ public class PlayerController : MonoBehaviour {
 	}
 		
 	void Strafe() {
-
 		float vertical = Input.GetAxis ("Vertical") * moveSpeed * Time.deltaTime;
 		float horizontal = Input.GetAxis ("Horizontal") * moveSpeed * Time.deltaTime;
-
 		transform.Translate (horizontal, 0, vertical);
 	}
 
 	void SwordAttack () {
-		
 		//MouseButtonDown b/c MouseButton refreshes too quickly and multple clicks
 		//will be registered in a single frame
-
 		if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
 			if (Input.GetMouseButtonDown (0) && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
-
 				animator.SetTrigger ("Normal_Attack");
-				if (!sword.swordSwingAudio.isPlaying) {
-					sword.swordSwingAudio.Play ();
-				}
 			}
 		} 
 	
 	}
-
-	/* Removes sound and walking animation when movement is diabled
-	 */
-	void DisableMovementEffects() {
-		animator.SetBool("Walking", false);
-		walkAudio.Stop ();
-	}
-
 }
