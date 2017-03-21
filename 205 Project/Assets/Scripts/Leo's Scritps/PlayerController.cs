@@ -143,15 +143,16 @@ public class PlayerController : MonoBehaviour {
 
 	void Defense() {
 		if (Input.GetKey (KeyCode.Q)) {
-			
 			animator.SetBool ("Shield_Up", true);
 			if (shieldUP != true) {	//prevents audio clip from being played multiple times.
 				shieldUpAudio.Play ();
 			}
 			shieldUP = true;
 
-		} else
+		} else {
 			shieldUP = false;
+			animator.SetBool ("Shield_Up", false);
+		}
 	}
 
 	void Movement () {
