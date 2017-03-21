@@ -135,9 +135,6 @@ public class PlayerController : MonoBehaviour {
 			//only zoom when arrow is drawn and stretching
 			if (playerCamera.fieldOfView != bowZoomValue && bowZoomed)
 				playerCamera.fieldOfView = Mathf.Lerp (playerCamera.fieldOfView, bowZoomValue, 0.05f);
-	
-
-
 		}
 	}
 
@@ -145,7 +142,7 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetKey (KeyCode.Q)) {
 			animator.SetBool ("Shield_Up", true);
 			if (shieldUP != true) {	//prevents audio clip from being played multiple times.
-				shieldUpAudio.Play ();
+//				shieldUpAudio.Play ();
 			}
 			shieldUP = true;
 

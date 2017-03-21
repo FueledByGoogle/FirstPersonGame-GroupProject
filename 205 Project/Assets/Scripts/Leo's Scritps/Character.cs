@@ -14,6 +14,8 @@ public class Character : MonoBehaviour {
  	Rigidbody characterRigidBody;
 
 
+	public bool shieldUP;
+
 	//Jumping
 	public Transform groundCheckTransform;
 	public bool isGrounded;
@@ -46,11 +48,17 @@ public class Character : MonoBehaviour {
 	}
 
 	public void TakeDamage (float damage){
-		health -= damage;
-		if (health < 0) {
-			health = 0;
+
+		if (shieldUP) {
+			
+		} else {
+			health -= damage;
+			if (health < 0) {
+				health = 0;
+			}
+			healthBar.SetHealth (health, maxHealth);
 		}
-		healthBar.SetHealth (health, maxHealth);
+
 	}
 
 	public bool GroundCheck () {
