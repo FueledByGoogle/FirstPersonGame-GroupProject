@@ -5,11 +5,12 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour {
 
     public Transform[] points;
-    public Transform playerPos;
+    private Transform playerPos;
     private int destPoint = 0;
     private UnityEngine.AI.NavMeshAgent agent;
 
-    public GameObject player;
+    private GameObject player;
+	private Animator anim;
     public float attackDist;
     public float fieldOfViewRange;
     public float RotationSpeed;
@@ -19,18 +20,19 @@ public class EnemyAI : MonoBehaviour {
     private RaycastHit hit;
 
     bool inLineSight;
+	bool canAttack;
+	float attackCooldown;
     Vector3 rayDir;
 
 
     void Start()
     {
         agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        player = GameObject.Find("Player");
-
-        // Disabling auto-braking allows for continuous movement
-        // between points (ie, the agent doesn't slow down as it
-        // approaches a destination point).
+        player = GameObject.Find("MyCustomPlayer");
+		anim = GetComponent<Animator>();
         agent.autoBraking = false;
+		attackCooldown = 3f;
+		canAttack = true;
 
         //GotoNextPoint();
     }
@@ -71,11 +73,15 @@ public class EnemyAI : MonoBehaviour {
             //rotate us over time according to speed until we are in the required rotation
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * RotationSpeed);
             transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0); //locks z & y rotations
+			if(canAttack){
+				//Debug.Log("Enemy is attacking");
+				canAttack = false;
+				anim.SetTrigger ("isAttacking");
+			}
 
-            Debug.Log("Enemy is attacking");
         }
   
-    }
+    }		
 
     void FixedUpdate()
     {
@@ -95,6 +101,13 @@ public class EnemyAI : MonoBehaviour {
 
     void Update()
     {
+		if(!canAttack){
+			attackCooldown -= Time.deltaTime;
+			if(attackCooldown <= 0){
+				attackCooldown = 3f;
+				canAttack = true;
+			}
+		}
         // Choose the next destination point when the agent gets
         // close to the current one.
         if (agent.remainingDistance < 0.5f && !inLineSight)
