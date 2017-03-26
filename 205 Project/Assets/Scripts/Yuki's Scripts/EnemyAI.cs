@@ -9,7 +9,7 @@ public class EnemyAI : MonoBehaviour {
     private int destPoint = 0;
     private UnityEngine.AI.NavMeshAgent agent;
 
-    private GameObject player;
+    public GameObject player;
 	private Animator anim;
     public float attackDist;
     public float fieldOfViewRange;
@@ -28,7 +28,7 @@ public class EnemyAI : MonoBehaviour {
     void Start()
     {
         agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        player = GameObject.Find("MyCustomPlayer");
+        player = GameObject.Find("Player");
 		anim = GetComponent<Animator>();
         agent.autoBraking = false;
 		attackCooldown = 3f;
@@ -88,10 +88,11 @@ public class EnemyAI : MonoBehaviour {
         distToPlayer = Vector3.Distance(player.transform.position, transform.position);
         rayDir = player.transform.position - transform.position;
 
-        if (distToPlayer < viewRange + 1) {
+        if (distToPlayer < viewRange) {
             if (Vector3.Angle(rayDir, transform.forward) < fieldOfViewRange)
             {
                 Physics.Raycast(transform.position, rayDir, out hit, viewRange);
+
                 if (hit.transform.tag == "Player")
                     inLineSight = true;
             }
