@@ -22,7 +22,7 @@ public class ArrowPretend : MonoBehaviour {
 			Destroy (gameObject);
 		}
 		else{
-			theBody.velocity = transform.forward * 5f * (-1);
+			theBody.velocity = transform.right * 5f;
 		}
 	}
 

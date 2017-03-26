@@ -15,9 +15,6 @@ public class Boulder : MonoBehaviour {
 		*/
 		Character characterHit = col.gameObject.transform.root.GetComponent<Character> ();
 
-		/*TODO: question
-		 */
-		//we need to also check for isTrigger because Unity still applies damage even after disabling trigger
 		if (characterHit != null && boulderCollider.isTrigger == true) {
 			characterHit.TakeDamage (damage);
 		}

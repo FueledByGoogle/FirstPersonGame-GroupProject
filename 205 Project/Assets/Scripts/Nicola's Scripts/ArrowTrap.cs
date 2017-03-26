@@ -8,7 +8,9 @@ public class ArrowTrap : MonoBehaviour {
 	int fired;
 	public GameObject Circle;
 	
-	public Rigidbody plateTrap;
+	//public Rigidbody plateTrap;
+	
+	float startTime;
 	
 	public Rigidbody arrowPrefab;
 		
@@ -16,14 +18,21 @@ public class ArrowTrap : MonoBehaviour {
 	void Start () {
 		isActivated = false;
 		fired = 0;
+		startTime = Time.time;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(isActivated == true && fired == 0){
-			var newArrow = Instantiate (arrowPrefab,Circle.transform.position,transform.rotation);
 			fired = 1;
 		}		
+		if(Time.time > startTime + 3f && fired == 1){
+			fired = 0;
+			startTime = Time.time;
+		}
+		else if(Time.time > startTime + 5f){
+			startTime = Time.time;
+		}
 	}
 	
 	void OnTriggerEnter(Collider coll){

@@ -5,10 +5,10 @@ public class Bow : MonoBehaviour {
 
     [Range(0.0f, 1.0f)]
     public float factor;
-
+	//String position
     public Vector3 firstPosition;
     public Vector3 finalPosition;
-
+	//Bow Status
     public bool stretching;
     public bool releasing;
 	public bool bowReady;
@@ -16,11 +16,10 @@ public class Bow : MonoBehaviour {
     public const float stretchSpeed = 1f;
     public const float releaseSpeed = 5f;
 
-
 	public float arrowVelocity = 20f;
 	public Rigidbody arrow;
 	public Transform arrowSpawnLocation;
-
+	//Audio
 	public AudioSource bowAudio;
 	public AudioSource arrowReleaseAudio;
 	public bool bowAudioPlayed;

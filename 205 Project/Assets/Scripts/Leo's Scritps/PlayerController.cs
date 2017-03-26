@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class PlayerController : MonoBehaviour {
 
 	public Camera playerCamera;
 	public Character character;
-	private Animator animator;
 	public float moveSpeed = 1f;
 	public bool movementDisabled;
 
@@ -18,11 +16,8 @@ public class PlayerController : MonoBehaviour {
 	public GameObject lHand;
 	public bool usingBow;
 	public bool arrowDrawn;
-	bool bowZoomed;
-	float bowZoomValue = 45f;
-
-
-	public AudioSource shieldUpAudio;
+	private bool bowZoomed;
+	private float bowZoomValue = 45f;
 
 	/*TODO: When different swords are implemented this won't work because
 	 * we're pointing to a specific word here, so instead we'll be pointing to the
@@ -31,11 +26,8 @@ public class PlayerController : MonoBehaviour {
 	public Sword sword;
 
 
-	private bool shieldUP;
-
 	void Start () {
 		character = GetComponent<Character> ();
-		animator = GetComponent<Animator> ();
 		movementDisabled = false;
 		//Bow related
 		usingBow = false;
@@ -49,13 +41,6 @@ public class PlayerController : MonoBehaviour {
 			Cursor.lockState = CursorLockMode.None;
 		}
 
-	}
-
-	void FixedUpdate () {
-		PlayerControl ();
-	}
-
-	private void PlayerControl (){
 
 		if (Input.GetKeyDown ("2")) {
 			usingBow = true;
@@ -66,35 +51,45 @@ public class PlayerController : MonoBehaviour {
 			bow.bowReady= false;
 			bow.factor = 0f;
 			fakeArrow.SetActive (false);
-		}
-		//Movement Disabled when shield is in use
-		if (shieldUP == false && movementDisabled == false) {
-			Movement ();
-		}
+			//Disable Archery
+			archery.SetActive (false);
+			//Graphics
+			rHand.SetActive (true);
+			lHand.SetActive (true);
+			playerCamera.fieldOfView = 60f;
+			bowZoomed = false;
 
-		if (movementDisabled)
-			animator.SetBool ("Walking", false);
+		}
 
 		Bow ();
 		if (usingBow == false) {
 			SwordAttack ();
-			Defense();
+			if (Time.time >= character.shieldTempTime) {
+				Defense ();
+			}
 		}
+
+	}
+
+	void FixedUpdate () {
+		PlayerControl ();
+	}
+
+	private void PlayerControl (){
+		
+		//Movement Disabled when shield is in use
+//		if (shieldUP == false && movementDisabled == false) {
+			Movement ();
+//		}
+
+		if (movementDisabled)
+			character.animator.SetBool ("Walking", false);
 
 	}
 		
 	void Bow() {
 
-		if (usingBow == false) {
-
-			archery.SetActive (false);
-
-			//Graphics
-			rHand.SetActive (true);
-			lHand.SetActive (true);
-
-
-		} else if (usingBow == true) {
+		if (usingBow == true) {
 			
 			archery.SetActive (true);
 
@@ -139,16 +134,12 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Defense() {
+		
 		if (Input.GetKey (KeyCode.Q)) {
-			animator.SetBool ("Shield_Up", true);
-			if (shieldUP != true) {	//prevents audio clip from being played multiple times.
-//				shieldUpAudio.Play ();
-			}
-			shieldUP = true;
-
+			character.animator.SetBool ("Shield_Up", true);
+			character.animator.SetBool ("Defense_Broken", false);
 		} else {
-			shieldUP = false;
-			animator.SetBool ("Shield_Up", false);
+			character.animator.SetBool ("Shield_Up", false);
 		}
 	}
 
@@ -160,12 +151,12 @@ public class PlayerController : MonoBehaviour {
 		 *TODO: Ability to sprint for a short amount of time
 		*/
 		if ((Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A) || 
-			 Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) && character.isGrounded)
-			animator.SetBool ("Walking", true);
+			Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) && character.isGrounded && !character.animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Hold_Defense"))
+			character.animator.SetBool ("Walking", true);
 
 		if (Input.GetKeyUp (KeyCode.D) || Input.GetKeyUp (KeyCode.A) ||
 		    Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) || !character.isGrounded)
-			animator.SetBool ("Walking", false);
+			character.animator.SetBool ("Walking", false);
 
 
 		if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A)) {
@@ -189,7 +180,7 @@ public class PlayerController : MonoBehaviour {
 			}
 
 		} else {
-			animator.SetBool("Walking", false);
+			character.animator.SetBool("Walking", false);
 		}
 
 	}
@@ -203,9 +194,9 @@ public class PlayerController : MonoBehaviour {
 	void SwordAttack () {
 		//MouseButtonDown b/c MouseButton refreshes too quickly and multple clicks
 		//will be registered in a single frame
-		if (!animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
-			if (Input.GetMouseButtonDown (0) && !animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
-				animator.SetTrigger ("Normal_Attack");
+		if (!character.animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
+			if (Input.GetMouseButtonDown (0) && !character.animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
+				character.animator.SetTrigger ("Normal_Attack");
 			}
 		} 
 	
