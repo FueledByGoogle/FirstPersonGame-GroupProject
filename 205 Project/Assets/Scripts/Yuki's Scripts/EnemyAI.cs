@@ -17,7 +17,6 @@ public class EnemyAI : MonoBehaviour {
     public float viewRange;
     private float distToPlayer;
     Vector3 inFront;
-    private RaycastHit hit;
 
     bool inLineSight;
 	bool canAttack;
@@ -62,10 +61,9 @@ public class EnemyAI : MonoBehaviour {
         }
         else
         {
-            agent.Stop();
-
+			agent.Stop ();
             //find the vector pointing from our position to the target
-             var direction = rayDir.normalized;
+            var direction = rayDir.normalized;
 
             //create the rotation we need to be in to look at the target
             var lookRotation = Quaternion.LookRotation(direction);
@@ -73,11 +71,11 @@ public class EnemyAI : MonoBehaviour {
             //rotate us over time according to speed until we are in the required rotation
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * RotationSpeed);
             transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0); //locks z & y rotations
-			if(canAttack){
+//			if(canAttack){
 				//Debug.Log("Enemy is attacking");
-				canAttack = false;
-				anim.SetTrigger ("isAttacking");
-			}
+//				canAttack = false;
+//				anim.SetTrigger ("isAttacking");
+//			}
 
         }
   
@@ -85,16 +83,27 @@ public class EnemyAI : MonoBehaviour {
 
     void FixedUpdate()
     {
+
+		Debug.DrawLine (transform.position, rayDir, Color.red);
+		RaycastHit hit;
+
+
+
         distToPlayer = Vector3.Distance(player.transform.position, transform.position);
         rayDir = player.transform.position - transform.position;
 
         if (distToPlayer < viewRange) {
             if (Vector3.Angle(rayDir, transform.forward) < fieldOfViewRange)
             {
-                Physics.Raycast(transform.position, rayDir, out hit, viewRange);
+				if (Physics.Raycast (transform.position, rayDir, out hit, viewRange)) {
+					if (hit.transform.tag == "Player") {
+						print ("see player");
+						inLineSight = true;
+					}
+				}
+				Debug.DrawLine (transform.position, rayDir, Color.red);
 
-                if (hit.transform.tag == "Player")
-                    inLineSight = true;
+
             }
 
         }
@@ -111,8 +120,10 @@ public class EnemyAI : MonoBehaviour {
 		}
         // Choose the next destination point when the agent gets
         // close to the current one.
-        if (agent.remainingDistance < 0.5f && !inLineSight)
-            GotoNextPoint();
+		if (agent.remainingDistance < 0.5f && !inLineSight) {
+			GotoNextPoint();
+		}
+			
 
         if (inLineSight || distToPlayer < 2.2f)
             attackPlayer();
