@@ -27,7 +27,7 @@ public class EnemyAI : MonoBehaviour {
     void Start()
     {
         agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        player = GameObject.Find("Player");
+        player = GameObject.Find("MyCustomPlayer");
 		anim = GetComponent<Animator>();
         agent.autoBraking = false;
 		attackCooldown = 3f;
@@ -53,7 +53,7 @@ public class EnemyAI : MonoBehaviour {
 
     void attackPlayer()
     {
-        if (distToPlayer > attackDist)
+        if (distToPlayer >= attackDist)
         {
             agent.Resume();
             agent.destination = player.transform.position;
@@ -70,12 +70,12 @@ public class EnemyAI : MonoBehaviour {
 
             //rotate us over time according to speed until we are in the required rotation
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * RotationSpeed);
-            transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0); //locks z & y rotations
-//			if(canAttack){
+            transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0); //locks z & x rotations
+			if(canAttack){
 				//Debug.Log("Enemy is attacking");
-//				canAttack = false;
-//				anim.SetTrigger ("isAttacking");
-//			}
+				canAttack = false;
+				anim.SetTrigger ("isAttacking");
+			}
 
         }
   

@@ -7,7 +7,8 @@ using UnityEngine.SceneManagement;
 public class door : MonoBehaviour
 {
 
-	public Text enterText;
+	public GameObject enterText;
+	//public GameObject player;
 	public int nextRoom;
 	public bool cleared;
 	public GameObject lvlMan;
@@ -15,30 +16,36 @@ public class door : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		enterText.enabled = false;
+
 	}
 
 	void Update ()
 	{
-		if (enterText.enabled) {
-			if (Input.GetKey (KeyCode.E)) {
-				DontDestroyOnLoad (lvlMan.transform.gameObject);
-				SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
+		if(enterText != null){
+			if (enterText.activeSelf) {
+				if (Input.GetKey (KeyCode.E)) {
+					DontDestroyOnLoad (lvlMan.transform.gameObject);
+					//DontDestroyOnLoad (player.transform.gameObject);
+					//player.transform.position = new Vector3 (-2.45f, 2f, -0.36f);
+					//player.transform.rotation = new Quaternion (0, 90, 0, 0);
+					SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
+				}
 			}
 		}
+
 	}
 
-	void OnTriggerEnter (Collider other)
+	void OnCollisionEnter (Collision other)
 	{
-		if (cleared && other.CompareTag ("Player")) {
-			enterText.enabled = true;
+		if (cleared && other.gameObject.transform.root.CompareTag ("Player")) {
+			enterText.SetActive (true);
 		}
 	}
 
-	void OnTriggerExit (Collider other)
+	void OnCollisionExit (Collision other)
 	{
-		if (cleared && other.CompareTag ("Player")) {
-			enterText.enabled = false;
+		if (cleared && other.gameObject.transform.root.CompareTag ("Player")) {
+			enterText.SetActive (false);
 		}
 	}
 
