@@ -24,6 +24,7 @@ public class ArrowTrap : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(isActivated == true && fired == 0){
+			var newArrow = Instantiate (arrowPrefab,Circle.transform.position,transform.rotation);
 			fired = 1;
 		}		
 		if(Time.time > startTime + 3f && fired == 1){

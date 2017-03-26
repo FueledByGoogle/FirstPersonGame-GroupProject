@@ -17,6 +17,7 @@ public class SignPostScript : MonoBehaviour {
 	
 	bool isReadingThis;
 	int numberOfTextBoxes;
+	Vector3 origin;
 
 
 	// Use this for initialization
@@ -32,7 +33,7 @@ public class SignPostScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(isReadingThis == true){
-			
+			player.transform.position = origin;
 			if(numberOfTextBoxes == 0){
 				buttonPanel.SetActive(false);
 				backgroundPanel.SetActive(true);
@@ -43,26 +44,25 @@ public class SignPostScript : MonoBehaviour {
 				reading1.enabled = false;
 				isReadingThis = false;
 				numberOfTextBoxes = 0;
-				player.movementDisabled = false;
 				pressR.enabled = false;
 				backgroundPanel.SetActive(false);
 			}
 		}
 		
 		if (Input.GetKeyDown (KeyCode.R) && pressR.enabled == true) { 
-			player.movementDisabled = true;
 			pressR.enabled = false;
 			isReadingThis = true;
 		}
 	}
 	
 	void OnTriggerEnter (Collider coll) {
-
+		player = coll.gameObject.transform.root.GetComponent<PlayerController > ();
 		//The following if statement enables the button prompt once in the trigger range of a sign
 		if (coll.gameObject.transform.root.CompareTag("Player")){
-			player = coll.gameObject.transform.root.GetComponent<PlayerController > ();
+			
 			buttonPanel.SetActive(true);
 			pressR.enabled = true;
+			origin = player.transform.position;
 		}
 		
 	}
