@@ -62,6 +62,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		Bow ();
+
 		if (usingBow == false) {
 			SwordAttack ();
 			if (Time.time >= character.shieldTempTime) {
@@ -192,9 +193,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void SwordAttack () {
-		//MouseButtonDown b/c MouseButton refreshes too quickly and multple clicks
-		//will be registered in a single frame
+		//MouseButtonDown b/c MouseButton refreshes too quickly and multiple swings will be inputed
 		if (!character.animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
+			
+			sword.hasCollided = false;
+
 			if (Input.GetMouseButtonDown (0) && !character.animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
 				character.animator.SetTrigger ("Normal_Attack");
 			}

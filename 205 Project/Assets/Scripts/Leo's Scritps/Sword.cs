@@ -4,18 +4,33 @@ using UnityEngine;
 
 public class Sword : MonoBehaviour {
 
-	public int swordDamage;
 	public AudioSource swordSwingAudio;
 
-	void OnTriggerEnter(Collider col) {
-		Character characterHit = col.gameObject.transform.root.GetComponent<Character> ();
+	public int swordDamage;
+	public bool hasCollided;	//used to prevent multiple hits from being registered in one swing
+								//hascollided needs to be set to false when not swinging sword
 
-		if (characterHit != null) {
-			characterHit.TakeDamage (swordDamage);
+	void Start () {
+		hasCollided = false;
+	}
+
+	void OnTriggerEnter(Collider col) {
+
+		/* Once sword has collided hasCollided will not be set to true until attack animation is finished.
+		 * Set hasCollided to false whenever the attack animation of the sword swing is not playing
+		 */
+
+		if (hasCollided == false) {
+			
+			hasCollided = true;
+			Character characterHit = col.gameObject.transform.root.GetComponent<Character> ();
+
+			if (characterHit != null) {
+				characterHit.TakeDamage (swordDamage);
+			}
 		}
 	}
 
-	/*TODO: OnCollisionEnter hit effect sparks so player knows
-	 * the target has been hit
-	 */
+	//TODO: OnCollisionEnter hit effect sparks so player knows the target has been hit
+
 }
