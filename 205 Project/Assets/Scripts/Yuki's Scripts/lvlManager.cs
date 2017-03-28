@@ -6,10 +6,20 @@ public class lvlManager : MonoBehaviour {
 
     roomNode start;
     public lvlManager lvlMan;
+	private GameObject player;
+	public GameObject spawnPoint;
 
     // Use this for initialization
     void Start () {
-		
+		player = GameObject.Find("MyCustomPlayer");
+		//spawnPoint = GameObject.Find ("spawnPoint");
+		player.transform.position = spawnPoint.transform.position;
+		player.transform.rotation = spawnPoint.transform.rotation;
+		/*
+		 * 
+		 * 
+		 * 
+		*/
 	}
 	
 	// Update is called once per frame
@@ -28,5 +38,7 @@ public class lvlManager : MonoBehaviour {
         {
             Destroy(gameObject);
         }
+			
+
     }
 }

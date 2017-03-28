@@ -8,15 +8,15 @@ public class door : MonoBehaviour
 {
 
 	public GameObject enterText;
-	//public GameObject player;
 	public int nextRoom;
 	public bool cleared;
 	public GameObject lvlMan;
+	//public int roomNum;
 
 	// Use this for initialization
 	void Start ()
 	{
-
+		//lvlMan = GameObject.Find("lvlman");
 	}
 
 	void Update ()
@@ -25,9 +25,7 @@ public class door : MonoBehaviour
 			if (enterText.activeSelf) {
 				if (Input.GetKey (KeyCode.E)) {
 					DontDestroyOnLoad (lvlMan.transform.gameObject);
-					//DontDestroyOnLoad (player.transform.gameObject);
-					//player.transform.position = new Vector3 (-2.45f, 2f, -0.36f);
-					//player.transform.rotation = new Quaternion (0, 90, 0, 0);
+					//lvlMan.next
 					SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
 				}
 			}
@@ -35,14 +33,14 @@ public class door : MonoBehaviour
 
 	}
 
-	void OnCollisionEnter (Collision other)
+	void OnTriggerEnter (Collider other)
 	{
 		if (cleared && other.gameObject.transform.root.CompareTag ("Player")) {
 			enterText.SetActive (true);
 		}
 	}
 
-	void OnCollisionExit (Collision other)
+	void OnTriggerExit (Collider other)
 	{
 		if (cleared && other.gameObject.transform.root.CompareTag ("Player")) {
 			enterText.SetActive (false);
