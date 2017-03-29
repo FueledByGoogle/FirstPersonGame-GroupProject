@@ -34,10 +34,11 @@ public class Arrow : MonoBehaviour {
 
 		if (characterHit != null) {
 			characterHit.TakeDamage (damage);
+			transform.Translate (0.05f * Vector3.forward);	//moves arrow a bit into what it collided with for realism
+			transform.parent = col.transform;
+		} else {
+			Destroy (gameObject);
 		}
-
-		transform.Translate (0.05f * Vector3.forward);	//moves arrow a bit into what it collided with for realism
-		transform.parent = col.transform;
 		Destroy (this.arrowCollider);
 	}
 		

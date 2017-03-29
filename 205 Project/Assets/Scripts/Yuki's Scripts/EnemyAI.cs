@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour {
     private UnityEngine.AI.NavMeshAgent agent;
 
     public GameObject player;
+	public Character character;
 	public Sword sword;
 	private Animator anim;
     public float attackDist;
@@ -28,6 +29,7 @@ public class EnemyAI : MonoBehaviour {
     void Start()
     {
         agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+		character = GetComponent<Character> ();
         player = GameObject.Find("MyCustomPlayer");
 		anim = GetComponent<Animator>();
         agent.autoBraking = false;
@@ -130,5 +132,11 @@ public class EnemyAI : MonoBehaviour {
 
         if (inLineSight || distToPlayer < 2.2f)
             attackPlayer();
+
+		/*TODO: Actual enemy death*/
+		if (character.health <= 0) {
+			this.gameObject.SetActive (false);
+		}
+
     }   
 }

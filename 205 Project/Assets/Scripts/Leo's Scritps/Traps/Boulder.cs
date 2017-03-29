@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Boulder : MonoBehaviour {
 
-	public const float damage = 5;
+	public float damage = 3;
 	public Collider boulderCollider;
 
 	void OnTriggerEnter (Collider col) {
@@ -21,4 +21,14 @@ public class Boulder : MonoBehaviour {
 
 		boulderCollider.isTrigger = false;
 	}
+
+	void OnCollisionEnter (Collision col) {
+		StartCoroutine (Wait());
+	}
+
+	IEnumerator Wait () {
+		yield return new WaitForSeconds (2f);
+		this.gameObject.SetActive (false);
+	}
+
 }

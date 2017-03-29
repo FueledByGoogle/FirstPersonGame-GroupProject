@@ -5,6 +5,7 @@ using UnityEngine;
 public class BoulderTrigger : MonoBehaviour {
 
 	public GameObject boulder;
+	public float boulderFallDelay = 2f;
 	Rigidbody boulderRigidBody;
 
 	public GameObject boulderIndicator;	//When a boulder falls indicates where it will land
@@ -32,7 +33,7 @@ public class BoulderTrigger : MonoBehaviour {
 
 	IEnumerator Wait () {
 		boulderIndicator.SetActive (true);
-		yield return new WaitForSeconds (2);
+		yield return new WaitForSeconds (boulderFallDelay);
 		boulderIndicator.SetActive (false);
 	}
 }
