@@ -73,10 +73,10 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		//TODO: temp on death respawn back to tutorial
-		if (character.health <= 0) {
-			SceneManager.LoadScene ("Tutorial");
-
-		}
+//		if (character.health <= 0) {
+//			SceneManager.LoadScene ("Tutorial");
+//
+//		}
 	}
 
 	void FixedUpdate () {
