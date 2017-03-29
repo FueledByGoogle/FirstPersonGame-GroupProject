@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour {
     private UnityEngine.AI.NavMeshAgent agent;
 
     public GameObject player;
+	public Sword sword;
 	private Animator anim;
     public float attackDist;
     public float fieldOfViewRange;
@@ -97,7 +98,6 @@ public class EnemyAI : MonoBehaviour {
             {
 				if (Physics.Raycast (transform.position, rayDir, out hit, viewRange)) {
 					if (hit.transform.tag == "Player") {
-						print ("see player");
 						inLineSight = true;
 					}
 				}
@@ -117,6 +117,9 @@ public class EnemyAI : MonoBehaviour {
 				attackCooldown = 3f;
 				canAttack = true;
 			}
+		}
+		if (!anim.GetCurrentAnimatorStateInfo (0).IsName ("Enemy_Attack")) {
+			sword.hasCollided = false;
 		}
         // Choose the next destination point when the agent gets
         // close to the current one.

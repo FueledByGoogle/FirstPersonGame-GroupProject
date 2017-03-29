@@ -81,6 +81,7 @@ public class PlayerController : MonoBehaviour {
 
 	void FixedUpdate () {
 		PlayerControl ();
+
 	}
 
 	private void PlayerControl (){
