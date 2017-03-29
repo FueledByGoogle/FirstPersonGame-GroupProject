@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour {
 
 
 	void Start () {
+		DontDestroyOnLoad (this);
 		character = GetComponent<Character> ();
 		movementDisabled = false;
 		//Bow related
