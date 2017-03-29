@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
@@ -44,21 +45,21 @@ public class PlayerController : MonoBehaviour {
 
 		if (Input.GetKeyDown ("2")) {
 			usingBow = true;
-		}else if (Input.GetKeyDown ("1")) {
+		} else if (Input.GetKeyDown ("1")) {
+			
+			//Switching off archery
+			fakeArrow.SetActive (false);
+			archery.SetActive (false);
 			usingBow = false;
-			//Reset arrow position
 			bow.stretching = false;
 			bow.bowReady= false;
 			bow.factor = 0f;
-			fakeArrow.SetActive (false);
-			//Disable Archery
-			archery.SetActive (false);
-			//Graphics
+
+			//Enable Melee
 			rHand.SetActive (true);
 			lHand.SetActive (true);
 			playerCamera.fieldOfView = 60f;
 			bowZoomed = false;
-
 		}
 
 		Bow ();
@@ -70,6 +71,11 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
+		//TODO: temp on death respawn back to tutorial
+		if (character.health <= 0) {
+			SceneManager.LoadScene ("Tutorial");
+
+		}
 	}
 
 	void FixedUpdate () {

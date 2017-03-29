@@ -14,14 +14,12 @@ public class ArrowTrap : MonoBehaviour {
 	
 	public Rigidbody arrowPrefab;
 		
-	// Use this for initialization
 	void Start () {
 		isActivated = false;
 		fired = 0;
 		startTime = Time.time;
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if(isActivated == true && fired == 0){
 			fired = 1;
@@ -36,15 +34,13 @@ public class ArrowTrap : MonoBehaviour {
 	}
 	
 	void OnTriggerEnter(Collider coll){
-		if (coll.gameObject.CompareTag("Player")){
+		if (coll.gameObject.transform.root.tag == "Player"){
 			isActivated = true;
 		}
-
-		
 	}
 	
 	void OnTriggerExit(Collider coll){
-		if (coll.gameObject.CompareTag("Player")){
+		if (coll.gameObject.transform.root.tag == "Player"){
 			isActivated = false;
 			fired = 0;
 		}

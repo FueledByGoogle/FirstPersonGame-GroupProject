@@ -20,7 +20,7 @@ public class MouseMoveCamera : MonoBehaviour {
 		smoothing.y = Mathf.Lerp (smoothing.y, mouseVectors.y, 1f / smoothFactor);
 
 		currCameraPos += smoothing;
-		currCameraPos.y = Mathf.Clamp (currCameraPos.y, -10f, 15f);
+		currCameraPos.y = Mathf.Clamp (currCameraPos.y, -30f, 30f);
 
 		transform.localRotation = Quaternion.AngleAxis (-currCameraPos.y, Vector3.right);
 		character.transform.rotation = Quaternion.AngleAxis (currCameraPos.x, Vector3.up);

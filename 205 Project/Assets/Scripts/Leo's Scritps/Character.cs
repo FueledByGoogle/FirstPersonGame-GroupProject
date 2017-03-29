@@ -56,13 +56,13 @@ public class Character : MonoBehaviour {
 		if (shield != null && animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Hold_Defense")) {
 			//Check if shield is strong enough to block damage
 			if (shield.TakeDamage (damage)) {
-				
+				//setting health
 				health -= damage;
 				if (health < 0) {
 					health = 0;
 				}
 				healthBar.SetHealth (health, maxHealth);
-
+				//setting shield animation
 				if (animator != null) {
 					animator.SetBool ("Defense_Broken", true);
 					animator.SetBool ("Shield_Up", false);
@@ -96,7 +96,7 @@ public class Character : MonoBehaviour {
 		* the groundCheckTransform to see if it hits anything.
 		* NOTE: make sure groundCheckTransform is close to the ground, otherwise ray will fall short of the ground
 		*/
-		isGrounded = Physics.Raycast (groundCheckTransform.position, Vector3.down, 0.07f);
+		isGrounded = Physics.Raycast (groundCheckTransform.position, Vector3.down, 0.1f);
 		return isGrounded;
 	}
 }
