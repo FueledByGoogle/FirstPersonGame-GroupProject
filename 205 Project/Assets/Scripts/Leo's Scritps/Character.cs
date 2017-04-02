@@ -133,6 +133,12 @@ public class Character : MonoBehaviour {
 		if (health > maxHealth) {
 			health = maxHealth;
 		}
+		healthBar.SetHealth (health, maxHealth);
+		/*IMPORTANT CHANGE!!!!!!
+		* Added healthBar.SetHealth (health, maxHealth); where there was none
+		*/
+		
+		
 	}
 
 	public bool GroundCheck () {

@@ -16,7 +16,7 @@ public class RespawnScript : MonoBehaviour {
 
 
 	public Rigidbody player;
-	private Vector3 place;
+	public Vector3 place;
 
 
 	// Use this for initialization
