@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour {
 	private bool bowZoomed;
 	private float bowZoomValue = 45f;
 
-	/*TODO: When different swords are implemented this won't work because
+	/* When different swords are implemented this won't work because
 	 * we're pointing to a specific word here, so instead we'll be pointing to the
 	 * instantiated sword later on
 	 */
@@ -67,12 +67,11 @@ public class PlayerController : MonoBehaviour {
 
 		if (usingBow == false) {
 			SwordAttack ();
-			if (Time.time >= character.shieldTempTime) {
+			if (Time.time >= character.shieldCoolDown) {
 				Defense ();
 			}
 		}
 
-		//TODO: temp on death respawn back to tutorial
 //		if (character.health <= 0) {
 //			SceneManager.LoadScene ("Tutorial");
 //
@@ -90,7 +89,6 @@ public class PlayerController : MonoBehaviour {
 //		if (shieldUP == false && movementDisabled == false) {
 			Movement ();
 //		}
-
 		if (movementDisabled)
 			character.animator.SetBool ("Walking", false);
 
@@ -144,7 +142,7 @@ public class PlayerController : MonoBehaviour {
 
 	void Defense() {
 		
-		if (Input.GetKey (KeyCode.Q)) {
+		if (Input.GetMouseButton (1)) {
 			character.animator.SetBool ("Shield_Up", true);
 			character.animator.SetBool ("Defense_Broken", false);
 		} else {
@@ -153,51 +151,47 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Movement () {
-		
+
 		character.Jump ();
 		/*TODO: Implement strafing where moving forward and sideways 
 		 * will be normalized so walking sideways and forwards at the same time
 		 *TODO: Ability to sprint for a short amount of time
-		*/
+		 */
+
 		if ((Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A) || 
 			Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) && character.isGrounded && !character.animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Hold_Defense"))
 			character.animator.SetBool ("Walking", true);
 
 		if (Input.GetKeyUp (KeyCode.D) || Input.GetKeyUp (KeyCode.A) ||
-		    Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) || !character.isGrounded)
+			Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) || !character.isGrounded)
 			character.animator.SetBool ("Walking", false);
 
+		if (character.isGrounded) {
 
-		if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A)) {
+			if (Input.GetKey (KeyCode.D)) {					//Right Movement
+					character.Strafe(false);
+			} else if (Input.GetKey (KeyCode.A)) {			//Left Movement
+					character.Strafe (true);
+			}
 			
-			Strafe ();
-
-		} else if (Input.GetKey (KeyCode.W)) {			//Forward Movement
-			
-			if (Input.GetKey (KeyCode.LeftShift) && usingBow == false) {
-				character.Move (1f, true);
+			if (Input.GetKey (KeyCode.W)) {					//Forward Movement
+				character.Move (true);
+			} else if (Input.GetKey (KeyCode.S)) {			//Backwards Movement
+				character.Move (false);
 			} else {
-				character.Move (1f, false);
+				character.animator.SetBool("Walking", false);
 			}
 
-		} else if (Input.GetKey (KeyCode.S)) {			//Backwards Movement
-			
-			if (Input.GetKey (KeyCode.LeftShift) && usingBow == false) {
-				character.Move (-1f, true);
-			} else {
-				character.Move (-1f, false);
-			}
-
-		} else {
-			character.animator.SetBool("Walking", false);
 		}
-
 	}
 		
 	void Strafe() {
-		float vertical = Input.GetAxis ("Vertical") * moveSpeed * Time.deltaTime;
-		float horizontal = Input.GetAxis ("Horizontal") * moveSpeed * Time.deltaTime;
-		transform.Translate (horizontal, 0, vertical);
+
+
+
+//		float vertical = Input.GetAxis ("Vertical") * moveSpeed * Time.deltaTime;
+//		float horizontal = Input.GetAxis ("Horizontal") * moveSpeed * Time.deltaTime;
+//		transform.Translate (horizontal, 0, vertical);
 	}
 
 	void SwordAttack () {

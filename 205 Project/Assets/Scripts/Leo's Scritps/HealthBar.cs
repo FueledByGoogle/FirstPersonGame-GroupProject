@@ -5,6 +5,20 @@ using UnityEngine;
 public class HealthBar : MonoBehaviour {
 
 	public GameObject healthBar;
+	public GameObject playerPos;
+
+	void Start () {
+		playerPos = GameObject.FindGameObjectWithTag ("Player");
+	}
+
+	void Update() {
+		if (playerPos != null && this.gameObject.transform.root.tag != "Player") {
+			Vector3 dist = (playerPos.transform.position - transform.position).normalized;
+			Quaternion rotation = Quaternion.LookRotation (dist);
+			transform.rotation = rotation;
+
+		}
+	}
 
 	public void SetHealth (float currHealth, float maxHealth) {
 		float scaledHealth = currHealth / maxHealth;

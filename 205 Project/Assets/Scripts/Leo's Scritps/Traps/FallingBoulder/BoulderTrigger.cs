@@ -13,7 +13,7 @@ public class BoulderTrigger : MonoBehaviour {
 	private bool boulderFallen;
 
 	void Start () {
-		boulderTriggered = Random.Range (0.0f, 1.0f);
+		boulderTriggered = Random.Range (0, 10);
 		boulderRigidBody = boulder.GetComponent<Rigidbody> ();
 		boulderFallen = false;
 		boulderIndicator.SetActive (false);
@@ -22,7 +22,7 @@ public class BoulderTrigger : MonoBehaviour {
 	void OnTriggerEnter (Collider col) {
 		if (boulderFallen == false) {
 			if (col.gameObject.transform.root.tag == "Player") {
-				if (boulderTriggered >= 0.2f) {
+				if (boulderTriggered >= 4) {
 					boulderFallen = true;
 					StartCoroutine (Wait());
 					boulderRigidBody.isKinematic = false;

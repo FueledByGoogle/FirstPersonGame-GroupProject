@@ -32,13 +32,21 @@ public class Arrow : MonoBehaviour {
 
 		Character characterHit = col.gameObject.transform.root.GetComponent<Character> ();
 
+
 		if (characterHit != null) {
-			characterHit.TakeDamage (damage);
-			transform.Translate (0.05f * Vector3.forward);	//moves arrow a bit into what it collided with for realism
-			transform.parent = col.transform;
-		} else {
+			if (characterHit.tag == "Player") {		//we don't want arrow to hang around if it hits the player
+				characterHit.TakeDamage (damage);
+				Destroy (gameObject);
+			} else {								//we want arrow to stick if it hits an enemy
+				characterHit.TakeDamage (damage);
+				transform.Translate (0.05f * Vector3.forward);	//moves arrow a bit into what it collided with for realism
+				transform.parent = col.transform;
+			}
+		} else {							
 			Destroy (gameObject);
 		}
+
+
 		Destroy (this.arrowCollider);
 	}
 		

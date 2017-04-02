@@ -13,22 +13,22 @@ public class Character : MonoBehaviour {
 
 	//Movement
 	public float walkSpeed = 1f;
-	public const float runSpeed = 1.5f;
 
 	//Defense
 	public Shield shield;
-	public float shieldTempTime;	//This will be set to a time in the future when the shield can be used again
+	public float shieldCoolDown;	//This will be set to a time in the future when the shield can be used again
 
 	//Jumping
 	public Transform groundCheckTransform;
 	public bool isGrounded;
+	public float groundCheckDistance;
 	public float jumpSpeed = 150f;
 
 	void Start () {
 		animator = GetComponent<Animator> ();
 		characterRigidBody = GetComponent<Rigidbody> ();
 		health = maxHealth;
-		shieldTempTime = 0;
+		shieldCoolDown = 0;
 	}
 
 	void FixedUpdate () {
@@ -37,17 +37,61 @@ public class Character : MonoBehaviour {
 		}
 	}
 
+	/* For moving and jumping we first modify the vector we want to modify in localSpace,
+	 * and then convert it back into world space.
+	 * You can't simply use transform.up because if you were moving forward it would set
+	 * your horizontal movement to zero
+	*/
 	public void Jump () {
-		if (Input.GetKeyDown (KeyCode.Space) && isGrounded){
-			characterRigidBody.AddForce (new Vector3 (0, jumpSpeed, 0));
+		Vector3 localVelocity = new Vector3 (0, 0, 0);
+
+		if (Input.GetKeyDown (KeyCode.Space) && isGrounded) {
+			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
+			localVelocity.y = jumpSpeed;
+			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
 		}
 	}
 
-	public void Move (float direction, bool run) {
-		if (run == false) {
-			transform.Translate(Vector3.forward * direction * walkSpeed * Time.deltaTime);
+	public void Move (bool forward) {
+		//movement using physics
+		Vector3 localVelocity = new Vector3 (0, 0, 0);
+
+		if (forward) {
+			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
+			localVelocity.z = walkSpeed;
+			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
 		} else {
-			transform.Translate(Vector3.forward *direction * runSpeed * Time.deltaTime);
+			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
+			localVelocity.z = -walkSpeed;
+			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
+		}
+
+	}
+
+	public void Strafe(bool left) {
+
+		Vector3 localVelocity = new Vector3(0, 0, 0);
+
+		if (left) {
+			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
+
+			localVelocity.x = -walkSpeed;
+
+			if (localVelocity.z != 0f) {	//we need to multiply forward and side speed by 0.7071 otherwise player can cheat and move faster
+				localVelocity.x = localVelocity.x * 0.7071f;									//TODO: Check if multiplying by 0.7071 is the almost equivalent to normalizing
+				localVelocity.z = localVelocity.z * 0.7071f;
+			}
+			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
+
+		} else {
+			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
+			localVelocity.x = walkSpeed;
+
+			if (localVelocity.z != 0f) {
+				localVelocity.x = localVelocity.x * 0.7071f;
+				localVelocity.z = localVelocity.z * 0.7071f;
+			}
+			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
 		}
 	}
 
@@ -67,10 +111,10 @@ public class Character : MonoBehaviour {
 					animator.SetBool ("Defense_Broken", true);
 					animator.SetBool ("Shield_Up", false);
 				}
-				shieldTempTime = Time.time + shield.shieldCoolDown;
+				shieldCoolDown = Time.time + shield.shieldCoolDown;
 
 			} else {
-				shieldTempTime = Time.time + shield.shieldCoolDown;
+				shieldCoolDown = Time.time + shield.shieldCoolDown;
 				animator.SetBool ("Shield_Up", false);
 				animator.SetBool ("Defense_Broken", false);
 			}
@@ -96,7 +140,7 @@ public class Character : MonoBehaviour {
 		* the groundCheckTransform to see if it hits anything.
 		* NOTE: make sure groundCheckTransform is close to the ground, otherwise ray will fall short of the ground
 		*/
-		isGrounded = Physics.Raycast (groundCheckTransform.position, Vector3.down, 0.1f);
+		isGrounded = Physics.Raycast (groundCheckTransform.position, Vector3.down, groundCheckDistance);
 		return isGrounded;
 	}
 }

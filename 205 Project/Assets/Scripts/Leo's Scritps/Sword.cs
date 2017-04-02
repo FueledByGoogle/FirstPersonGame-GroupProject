@@ -31,6 +31,4 @@ public class Sword : MonoBehaviour {
 		}
 	}
 
-	//TODO: OnCollisionEnter hit effect sparks so player knows the target has been hit
-
 }
