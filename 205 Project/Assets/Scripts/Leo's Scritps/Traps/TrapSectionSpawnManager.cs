@@ -19,7 +19,7 @@ public class TrapSectionSpawnManager : MonoBehaviour {
 			} else {
 
 				Vector3 tmp = trapsToInstantiate [i - 1].transform.FindChild ("NextSpawnTransform").position;
-//				tmp.y = tmp.y - 0.05f; //this is to offset the next trap platform to be a tiny bit below so player doesn't gets stuck between colliders
+				tmp.y = tmp.y - 0.01f; //this is to offset the next trap platform to be a tiny bit below so player doesn't gets stuck between colliders
 				trapsToInstantiate [i] = Instantiate (Traps [Random.Range (0, Traps.Length)], tmp, new Quaternion (0, 0, 0, 0));
 
 			}

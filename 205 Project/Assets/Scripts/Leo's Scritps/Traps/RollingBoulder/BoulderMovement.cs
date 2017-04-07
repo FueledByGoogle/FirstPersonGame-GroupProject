@@ -5,10 +5,12 @@ using UnityEngine;
 public class BoulderMovement : MonoBehaviour {
 
 	public bool rollRight = true;
-	public Rigidbody boulderRigidBody;
+	private Rigidbody boulderRigidBody;
+	private Collider boulderCollider;
 
 	void Start () {
 		boulderRigidBody = GetComponent<Rigidbody> ();
+		boulderCollider = GetComponent<Collider> ();
 	}
 	
 
@@ -19,6 +21,12 @@ public class BoulderMovement : MonoBehaviour {
 			boulderRigidBody.velocity = new Vector3 (1.5f, boulderRigidBody.velocity.y, 0);
 		} else {
 			boulderRigidBody.velocity = new Vector3 (-1.5f, boulderRigidBody.velocity.y, 0);
+		}
+	}
+
+	void OnCollisionEnter (Collision coll) {
+		if (coll.gameObject.tag == "EnvironmentIgnore" && boulderCollider != null) {
+			Physics.IgnoreCollision (coll.collider, boulderCollider);
 		}
 	}
 }

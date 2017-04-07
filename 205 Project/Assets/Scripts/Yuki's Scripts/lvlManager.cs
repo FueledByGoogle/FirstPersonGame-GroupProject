@@ -6,6 +6,7 @@ public class lvlManager : MonoBehaviour {
 	
 	public GameObject spawnPoint;
     public lvlManager lvlMan;
+
 	private GameObject player;
 
     void Start () {

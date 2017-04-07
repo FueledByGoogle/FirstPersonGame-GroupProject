@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour {
 
-	public const float maxTravelTime = 10f;
+	public const float maxTravelTime = 5f;
 	public float initialTime; 
 	public const float damage = 2f;
 	public Collider arrowCollider;
@@ -25,13 +25,18 @@ public class Arrow : MonoBehaviour {
 		transform.forward = Vector3.Lerp (transform.forward, arrowRigidbody.velocity.normalized * 100f, Time.deltaTime);
 	}
 
-	public void OnCollisionEnter (Collision col) {
+	public void OnCollisionEnter (Collision coll) {
 		//we need to traverse to the root of the gameobject because that's where the character
 		//script is
+
+		if (coll.gameObject.tag == "EnvironmentIgnore") {
+			Physics.IgnoreCollision (coll.collider, arrowCollider);
+		}
+
 		arrowRigidbody.isKinematic = true;
 		arrowHit.Play();
 
-		Character characterHit = col.gameObject.transform.root.GetComponent<Character> ();
+		Character characterHit = coll.gameObject.transform.root.GetComponent<Character> ();
 
 
 		if (characterHit != null) {
@@ -41,11 +46,11 @@ public class Arrow : MonoBehaviour {
 			} else {								//we want arrow to stick if it hits an enemy
 				characterHit.TakeDamage (damage);
 				transform.Translate (0.05f * Vector3.forward);	//moves arrow a bit into what it collided with for realism
-				transform.parent = col.transform;
+				transform.parent = coll.transform;
 				arrowTrail.SetActive (false);
 			}
 		} else {							
-			Destroy (gameObject);
+			Destroy (gameObject, 3f);
 		}
 			
 		Destroy (this.arrowCollider);

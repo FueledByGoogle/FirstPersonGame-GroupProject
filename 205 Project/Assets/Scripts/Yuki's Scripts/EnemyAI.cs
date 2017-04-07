@@ -5,21 +5,23 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour {
 
-    private Transform playerPos;
-    private int destPoint = 0;
-    private NavMeshAgent agent;
-	private Animator anim;
-	private GameObject player;
-
 	public Transform[] points;
+	public CombatRoomManager combatRoomManager; //on death -1 enemy in room
+	//player
+	private Transform playerPos;
+	private GameObject player;
+	//NPC properties
+	private Animator anim;
 	public Character character;
 	public Sword sword;
-
+	//navigation
+	private int destPoint = 0;
+	private NavMeshAgent agent;
+	private float distToPlayer;
     public float attackDist;
     public float fieldOfViewRange;				//field of view in degrees
     public float RotationSpeed;
     public float viewRange;
-    private float distToPlayer;
     Vector3 inFront;
 
     bool inLineSight;
@@ -36,8 +38,7 @@ public class EnemyAI : MonoBehaviour {
         agent.autoBraking = false;
 		attackCooldown = 3f;
 		canAttack = true;
-
-        //GotoNextPoint();
+		//GotoNextPoint();
     }
 
 
@@ -45,7 +46,7 @@ public class EnemyAI : MonoBehaviour {
         // Returns if no points have been set up
         if (points.Length == 0)
             return;
-
+		
         // Set the agent to go to the currently selected destination.
         agent.destination = points[destPoint].position;
 
@@ -70,8 +71,8 @@ public class EnemyAI : MonoBehaviour {
             //rotate us over time according to speed until we are in the required rotation
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * RotationSpeed);
             transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0); //locks z & x rotations
-			if(canAttack) {
-				//Debug.Log("Enemy is attacking");
+
+			if (canAttack) {
 				canAttack = false;
 				anim.SetTrigger ("isAttacking");
 			}
@@ -86,17 +87,12 @@ public class EnemyAI : MonoBehaviour {
         distToPlayer = Vector3.Distance(player.transform.position, transform.position);
         rayDir = player.transform.position - transform.position;
 
-        if (distToPlayer < viewRange) {
-            if (Vector3.Angle(rayDir, transform.forward) < fieldOfViewRange) {
-				if (Physics.Raycast (transform.position, rayDir, out hit, viewRange)) {
-					if (hit.transform.tag == "Player") {
-						inLineSight = true;					}
-				}
-//				Debug.DrawLine (transform.position, rayDir, Color.white);
+		if ((distToPlayer < viewRange) 										  && 
+			(Vector3.Angle(rayDir, transform.forward) < fieldOfViewRange) 	  &&
+			(Physics.Raycast (transform.position, rayDir, out hit, viewRange) &&
+			hit.transform.tag == "Player")) {
 
-
-            }
-
+				inLineSight = true;
         }	
     }
 
@@ -121,10 +117,13 @@ public class EnemyAI : MonoBehaviour {
 
 			if (inLineSight || distToPlayer < 2.2f)
 				attackPlayer();
-
-			/*TODO: Actual enemy death*/
-			if (character.health <= 0) {
-//				this.gameObject.SetActive (false);
+			
+			//DEATH
+			if (character.health <= 0 && anim.enabled) {
+				combatRoomManager.numOfEnemies -= 1;
+				anim.Stop ();
+				anim.Rebind ();
+				anim.enabled = false;
 				agent.enabled = false;
 			}
 		}
@@ -132,6 +131,7 @@ public class EnemyAI : MonoBehaviour {
 		if (character.health < character.maxHealth) {
 			inLineSight = true;
 		}
+
 
 
     }   

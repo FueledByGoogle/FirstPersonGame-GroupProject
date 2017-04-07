@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
 	public Camera playerCamera;
 	public Character character;
+
+	public Text highscoreText;
+	public int highscore;
+	public Text roomsClearedText;
 	public int roomsCleared;
 
 	public float moveSpeed = 1f;
@@ -34,6 +39,7 @@ public class PlayerController : MonoBehaviour {
 		character = GetComponent<Character> ();
 		movementDisabled = false;
 		roomsCleared = 0;
+		highscoreText.text = ("Highscore: " + PlayerPrefs.GetInt ("highscore", 0));
 		//Bow related
 		usingBow = false;
 		archery.SetActive (false);
@@ -76,10 +82,16 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-//		if (character.health <= 0) {
-//			SceneManager.LoadScene ("Tutorial");
-//
-//		}
+		if (character.health <= 0) {
+			SceneManager.LoadScene ("Tutorial");
+			DestroyObject (this.gameObject);							//new player at tutorial so we need to destroy curr one
+			if (roomsCleared > PlayerPrefs.GetInt ("highscore", 0)) {
+				highscoreText.text = ("Highscore: " + roomsCleared);
+				PlayerPrefs.SetInt ("highscore", roomsCleared);
+				PlayerPrefs.Save ();
+			}
+
+		}
 	}
 
 	void FixedUpdate () {

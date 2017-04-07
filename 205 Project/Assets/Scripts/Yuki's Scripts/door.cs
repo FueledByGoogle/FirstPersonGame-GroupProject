@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class Door : MonoBehaviour {
 
+	private PlayerController player;
 	public GameObject enterText;
-	public PlayerController player;
 	public int nextRoom;
 	public bool cleared;
 
@@ -19,13 +19,10 @@ public class Door : MonoBehaviour {
 
 	void Update ()
 	{
-		if (enterText != null){
-			if (enterText.activeSelf) {
-				if (Input.GetKey (KeyCode.E)) {
-					SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
-					player.roomsCleared += 1;
-				}
-			}
+		if (enterText != null && enterText.activeSelf && Input.GetKey (KeyCode.E)) {
+			SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
+			player.roomsCleared += 1;
+			player.roomsClearedText.text = ("Rooms Cleared: " + player.roomsCleared);
 		}
 
 	}
