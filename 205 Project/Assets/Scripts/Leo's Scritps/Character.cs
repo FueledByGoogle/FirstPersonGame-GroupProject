@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Character : MonoBehaviour {
 
-	public HealthBar healthBar;	
-	Rigidbody characterRigidBody;
+	public HealthBar healthBar;
+	public Rigidbody rigidBody;
 	public Animator animator;
 
 	public float maxHealth = 10f;
@@ -19,20 +19,22 @@ public class Character : MonoBehaviour {
 	public float shieldCoolDown;	//This will be set to a time in the future when the shield can be used again
 
 	//Jumping
-	public Transform groundCheckTransform;
+	public Transform groundCheckTransformLeft;
+	public Transform groundCheckTransformRight;
+	public Transform groundCheckTransformMiddle;
 	public bool isGrounded;
 	public float groundCheckDistance;
 	public float jumpSpeed = 150f;
 
 	void Start () {
 		animator = GetComponent<Animator> ();
-		characterRigidBody = GetComponent<Rigidbody> ();
+		rigidBody = GetComponent<Rigidbody> ();
 		health = maxHealth;
 		shieldCoolDown = 0;
 	}
 
 	void FixedUpdate () {
-		if (groundCheckTransform != null) {
+		if (groundCheckTransformLeft != null && groundCheckTransformRight != null && groundCheckTransformMiddle != null) {
 			isGrounded = GroundCheck ();
 		}
 	}
@@ -40,30 +42,31 @@ public class Character : MonoBehaviour {
 	/* For moving and jumping we first modify the vector we want to modify in localSpace,
 	 * and then convert it back into world space.
 	 * You can't simply use transform.up because if you were moving forward it would set
-	 * your horizontal movement to zero
+	 * your horizontal movement to zero. So we use rigidBody.velocity so it retains current velocities
 	*/
 	public void Jump () {
 		Vector3 localVelocity = new Vector3 (0, 0, 0);
 
 		if (Input.GetKeyDown (KeyCode.Space) && isGrounded) {
-			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
+			localVelocity = transform.InverseTransformDirection (rigidBody.velocity);
 			localVelocity.y = jumpSpeed;
-			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
+			rigidBody.velocity = transform.TransformDirection (localVelocity);
 		}
 	}
 
 	public void Move (bool forward) {
-		//movement using physics
+		
 		Vector3 localVelocity = new Vector3 (0, 0, 0);
 
 		if (forward) {
-			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
+			localVelocity = transform.InverseTransformDirection (rigidBody.velocity);
 			localVelocity.z = walkSpeed;
-			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
+			rigidBody.velocity = transform.TransformDirection (localVelocity);
+
 		} else {
-			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
+			localVelocity = transform.InverseTransformDirection (rigidBody.velocity);
 			localVelocity.z = -walkSpeed;
-			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
+			rigidBody.velocity = transform.TransformDirection (localVelocity);
 		}
 
 	}
@@ -73,25 +76,24 @@ public class Character : MonoBehaviour {
 		Vector3 localVelocity = new Vector3(0, 0, 0);
 
 		if (left) {
-			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
-
+			localVelocity = transform.InverseTransformDirection (rigidBody.velocity);
 			localVelocity.x = -walkSpeed;
 
 			if (localVelocity.z != 0f) {	//we need to multiply forward and side speed by 0.7071 otherwise player can cheat and move faster
 				localVelocity.x = localVelocity.x * 0.7071f;									//TODO: Check if multiplying by 0.7071 is the almost equivalent to normalizing
 				localVelocity.z = localVelocity.z * 0.7071f;
 			}
-			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
+			rigidBody.velocity = transform.TransformDirection (localVelocity);
 
 		} else {
-			localVelocity = transform.InverseTransformDirection (characterRigidBody.velocity);
+			localVelocity = transform.InverseTransformDirection (rigidBody.velocity);
 			localVelocity.x = walkSpeed;
 
 			if (localVelocity.z != 0f) {
 				localVelocity.x = localVelocity.x * 0.7071f;
 				localVelocity.z = localVelocity.z * 0.7071f;
 			}
-			characterRigidBody.velocity = transform.TransformDirection (localVelocity);
+			rigidBody.velocity = transform.TransformDirection (localVelocity);
 		}
 	}
 
@@ -138,7 +140,6 @@ public class Character : MonoBehaviour {
 		* Added healthBar.SetHealth (health, maxHealth); where there was none
 		*/
 		
-		
 	}
 
 	public bool GroundCheck () {
@@ -146,7 +147,13 @@ public class Character : MonoBehaviour {
 		* the groundCheckTransform to see if it hits anything.
 		* NOTE: make sure groundCheckTransform is close to the ground, otherwise ray will fall short of the ground
 		*/
-		isGrounded = Physics.Raycast (groundCheckTransform.position, Vector3.down, groundCheckDistance);
+		if (Physics.Raycast (groundCheckTransformLeft.position, Vector3.down, groundCheckDistance) ||
+			Physics.Raycast (groundCheckTransformRight.position, Vector3.down, groundCheckDistance)||
+			Physics.Raycast (groundCheckTransformMiddle.position, Vector3.down, groundCheckDistance)) {
+			isGrounded = true;
+		} else {
+			isGrounded = false;
+		}
 		return isGrounded;
 	}
 }

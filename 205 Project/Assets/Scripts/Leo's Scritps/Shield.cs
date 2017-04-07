@@ -6,7 +6,8 @@ public class Shield : MonoBehaviour {
 
 	AudioSource shieldHitAudio;
 	public float shieldDefenseValue;
-	//Different shields will have different cool down after failing to block damage
+
+	public ParticleSystem shieldSpark;						
 	public float shieldCoolDown = 2f;	//Time before shield can be used again after failing to block damage
 
 
@@ -20,6 +21,14 @@ public class Shield : MonoBehaviour {
 			return false;
 		} else {
 			return true;
+		}
+	}
+
+	void OnTriggerEnter (Collider coll) {
+
+		if (coll.tag == "Weapon") {
+			shieldSpark.Stop ();
+			shieldSpark.Play ();
 		}
 	}
 

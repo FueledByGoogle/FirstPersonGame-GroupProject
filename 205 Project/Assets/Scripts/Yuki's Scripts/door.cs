@@ -4,29 +4,26 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class door : MonoBehaviour
-{
+public class Door : MonoBehaviour {
 
 	public GameObject enterText;
+	public PlayerController player;
 	public int nextRoom;
 	public bool cleared;
-	public GameObject lvlMan;
-	//public int roomNum;
 
-	// Use this for initialization
 	void Start ()
 	{
-		//lvlMan = GameObject.Find("lvlman");
-	}
+		nextRoom = Random.Range (1, 3);
+		player = GameObject.Find ("MyCustomPlayer").GetComponent<PlayerController> ();
+	}	
 
 	void Update ()
 	{
-		if(enterText != null){
+		if (enterText != null){
 			if (enterText.activeSelf) {
 				if (Input.GetKey (KeyCode.E)) {
-					DontDestroyOnLoad (lvlMan.transform.gameObject);
-					//lvlMan.next
 					SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
+					player.roomsCleared += 1;
 				}
 			}
 		}
@@ -47,8 +44,4 @@ public class door : MonoBehaviour
 		}
 	}
 
-	public void childRoom ()
-	{
-
-	}
 }

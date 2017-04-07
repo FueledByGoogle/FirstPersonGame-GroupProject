@@ -9,6 +9,7 @@ public class Arrow : MonoBehaviour {
 	public const float damage = 2f;
 	public Collider arrowCollider;
 	public Rigidbody arrowRigidbody;
+	public GameObject arrowTrail;
 
 	AudioSource arrowHit;
 
@@ -41,12 +42,12 @@ public class Arrow : MonoBehaviour {
 				characterHit.TakeDamage (damage);
 				transform.Translate (0.05f * Vector3.forward);	//moves arrow a bit into what it collided with for realism
 				transform.parent = col.transform;
+				arrowTrail.SetActive (false);
 			}
 		} else {							
 			Destroy (gameObject);
 		}
-
-
+			
 		Destroy (this.arrowCollider);
 	}
 		

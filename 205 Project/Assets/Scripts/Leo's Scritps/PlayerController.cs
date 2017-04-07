@@ -7,9 +7,12 @@ public class PlayerController : MonoBehaviour {
 
 	public Camera playerCamera;
 	public Character character;
+	public int roomsCleared;
+
 	public float moveSpeed = 1f;
 	public bool movementDisabled;
 
+	//Archery
 	public Bow bow;
 	public GameObject archery;						//Used to hide archery related elements when not using the bow
 	public GameObject fakeArrow;					//Fake arrow only displayed when player clicks Fire and bow begins to draw
@@ -26,11 +29,11 @@ public class PlayerController : MonoBehaviour {
 	 */
 	public Sword sword;
 
-
 	void Start () {
 		DontDestroyOnLoad (this);
 		character = GetComponent<Character> ();
 		movementDisabled = false;
+		roomsCleared = 0;
 		//Bow related
 		usingBow = false;
 		archery.SetActive (false);
@@ -50,6 +53,7 @@ public class PlayerController : MonoBehaviour {
 			
 			//Switching off archery
 			fakeArrow.SetActive (false);
+
 			archery.SetActive (false);
 			usingBow = false;
 			bow.stretching = false;
@@ -80,18 +84,14 @@ public class PlayerController : MonoBehaviour {
 
 	void FixedUpdate () {
 		PlayerControl ();
-
+		character.Jump ();
 	}
 
 	private void PlayerControl (){
-		
-		//Movement Disabled when shield is in use
-//		if (shieldUP == false && movementDisabled == false) {
-			Movement ();
-//		}
+
+		Movement ();
 		if (movementDisabled)
 			character.animator.SetBool ("Walking", false);
-
 	}
 		
 	void Bow() {
@@ -152,7 +152,7 @@ public class PlayerController : MonoBehaviour {
 
 	void Movement () {
 
-		character.Jump ();
+//		character.Jump ();
 		/*TODO: Implement strafing where moving forward and sideways 
 		 * will be normalized so walking sideways and forwards at the same time
 		 *TODO: Ability to sprint for a short amount of time
@@ -166,7 +166,7 @@ public class PlayerController : MonoBehaviour {
 			Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) || !character.isGrounded)
 			character.animator.SetBool ("Walking", false);
 
-		if (character.isGrounded) {
+//		if (character.isGrounded) {
 
 			if (Input.GetKey (KeyCode.D)) {					//Right Movement
 					character.Strafe(false);
@@ -176,22 +176,36 @@ public class PlayerController : MonoBehaviour {
 			
 			if (Input.GetKey (KeyCode.W)) {					//Forward Movement
 				character.Move (true);
+				if (character.rigidBody.velocity.z == 0f) {
+//					transform.position = new Vector3 (transform.position.x, transform.position.y + 0.05f, transform.position.z + 0.05f);
+				}
 			} else if (Input.GetKey (KeyCode.S)) {			//Backwards Movement
 				character.Move (false);
 			} else {
 				character.animator.SetBool("Walking", false);
 			}
 
-		}
-	}
-		
-	void Strafe() {
 
 
+//		}
+//		float h = Input.GetAxisRaw("Horizontal");
+//		float v = Input.GetAxisRaw ("Vertical");
+//
+//		Vector3 movement = new Vector3 (h, 0f, v);
+//
+//
+//		if (v == 1f ) {
+////			movement = movement.normalized * 2f * Time.deltaTime;
+////			character.rigidBody.MovePosition (transform.localPosition + movement);
+//
+//
+//			character.rigidBody.MovePosition (movement);
+//		} else if (v == -1f) {
+//			movement = (-1) * movement.normalized * 2f * Time.deltaTime;
+//			character.rigidBody.MovePosition (transform.localPosition - movement);
+//		}
 
-//		float vertical = Input.GetAxis ("Vertical") * moveSpeed * Time.deltaTime;
-//		float horizontal = Input.GetAxis ("Horizontal") * moveSpeed * Time.deltaTime;
-//		transform.Translate (horizontal, 0, vertical);
+
 	}
 
 	void SwordAttack () {
