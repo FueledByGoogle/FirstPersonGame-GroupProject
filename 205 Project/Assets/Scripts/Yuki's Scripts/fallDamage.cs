@@ -10,11 +10,11 @@ public class fallDamage : MonoBehaviour {
 	void OnTriggerEnter (Collider col)
 	{
 		if (col.gameObject.transform.root.CompareTag ("Player")) {
-			col.transform = spawnPoint.transform;
-			GameObject player = find
-			Character fallDamage = player.transform.root.GetComponent<Character> ();
-			fallDamage.TakeDamage (damage);
-			player.transform.position = spawnPoint.transform.position;
+			//col.transform = spawnPoint.transform;
+			//GameObject player = find
+			//Character fallDamage = player.transform.root.GetComponent<Character> ();
+			//fallDamage.TakeDamage (damage);
+			//player.transform.position = spawnPoint.transform.position;
 		}
 	}
 }
