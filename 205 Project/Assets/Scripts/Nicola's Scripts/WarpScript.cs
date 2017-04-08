@@ -8,25 +8,25 @@ public class WarpScript : MonoBehaviour {
 	public RespawnScript respawnPoint;
 	public Rigidbody player;
 	
-	private Renderer rend;
+	public GameObject listOfTraps;
+	public GameObject prevTraps;
 	
-	//Vector3 StartWarp;
-	Vector3 FinishWarp;
+
 
 	// Use this for initialization
 	void Start () {
-		//StartWarp = gameObject.transform.position;
-		FinishWarp = WarpTo.transform.position;
-		rend = GetComponent<Renderer>();
+
 	}
 	
 	void OnCollisionEnter(Collision coll) {
-        if (coll.gameObject.CompareTag("Player") && rend == true){
+        if (coll.gameObject.CompareTag("Player") /*&& rend == true*/){
 			player.isKinematic = true;
 			player.velocity = new Vector3(0,0,0);
-			player.transform.position = FinishWarp;
+			player.transform.position = WarpTo.transform.position;
 			player.isKinematic = false;
-			respawnPoint.place = FinishWarp;
+			respawnPoint.place = WarpTo.transform.position;
+			listOfTraps.SetActive(true);
+			prevTraps.SetActive(false);
 		}        
     }
 }
