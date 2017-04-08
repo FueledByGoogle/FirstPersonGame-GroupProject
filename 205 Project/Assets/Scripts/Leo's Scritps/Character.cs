@@ -26,11 +26,20 @@ public class Character : MonoBehaviour {
 	public float groundCheckDistance;
 	public float jumpSpeed = 150f;
 
+	public bool characterGettingHit;
+
+
 	void Start () {
 		animator = GetComponent<Animator> ();
 		rigidBody = GetComponent<Rigidbody> ();
 		health = maxHealth;
 		shieldCoolDown = 0;
+		characterGettingHit = false;
+	}
+
+
+	void Update () {
+		characterGettingHit = false;
 	}
 
 	void FixedUpdate () {
@@ -99,9 +108,10 @@ public class Character : MonoBehaviour {
 
 	public void TakeDamage (float damage){
 
-		if (shield != null && animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Hold_Defense")) {
-			//Check if shield is strong enough to block damage
-			if (shield.TakeDamage (damage)) {
+		if (shield != null && animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Hold_Defense") &&
+			shield.shieldHit) {
+
+			if (shield.TakeDamage (damage)) {	//take damage
 				//setting health
 				health -= damage;
 				if (health < 0) {
@@ -115,7 +125,7 @@ public class Character : MonoBehaviour {
 				}
 				shieldCoolDown = Time.time + shield.shieldCoolDown;
 
-			} else {
+			} else {							//ignore damage
 				shieldCoolDown = Time.time + shield.shieldCoolDown;
 				animator.SetBool ("Shield_Up", false);
 				animator.SetBool ("Defense_Broken", false);
@@ -127,6 +137,9 @@ public class Character : MonoBehaviour {
 				health = 0;
 			}
 			healthBar.SetHealth (health, maxHealth);
+
+			characterGettingHit = true;
+
 		}
 	}
 

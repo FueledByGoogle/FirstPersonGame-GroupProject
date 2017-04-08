@@ -170,52 +170,36 @@ public class PlayerController : MonoBehaviour {
 		 *TODO: Ability to sprint for a short amount of time
 		 */
 
-		if ((Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A) || 
-			Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) && character.isGrounded && !character.animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Hold_Defense"))
+		if ((Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A) ||
+		    Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) && character.isGrounded && !character.animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Hold_Defense"))
 			character.animator.SetBool ("Walking", true);
 
 		if (Input.GetKeyUp (KeyCode.D) || Input.GetKeyUp (KeyCode.A) ||
-			Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) || !character.isGrounded)
+		    Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) || !character.isGrounded)
 			character.animator.SetBool ("Walking", false);
 
 //		if (character.isGrounded) {
 
 			if (Input.GetKey (KeyCode.D)) {					//Right Movement
-					character.Strafe(false);
+				character.Strafe (false);
 			} else if (Input.GetKey (KeyCode.A)) {			//Left Movement
-					character.Strafe (true);
+				character.Strafe (true);
 			}
-			
+				
 			if (Input.GetKey (KeyCode.W)) {					//Forward Movement
 				character.Move (true);
-				if (character.rigidBody.velocity.z == 0f) {
+			if (character.rigidBody.velocity.z == 0f) {
 //					transform.position = new Vector3 (transform.position.x, transform.position.y + 0.05f, transform.position.z + 0.05f);
 				}
 			} else if (Input.GetKey (KeyCode.S)) {			//Backwards Movement
 				character.Move (false);
 			} else {
-				character.animator.SetBool("Walking", false);
+				character.animator.SetBool ("Walking", false);
 			}
 
 
 
-//		}
-//		float h = Input.GetAxisRaw("Horizontal");
-//		float v = Input.GetAxisRaw ("Vertical");
-//
-//		Vector3 movement = new Vector3 (h, 0f, v);
-//
-//
-//		if (v == 1f ) {
-////			movement = movement.normalized * 2f * Time.deltaTime;
-////			character.rigidBody.MovePosition (transform.localPosition + movement);
-//
-//
-//			character.rigidBody.MovePosition (movement);
-//		} else if (v == -1f) {
-//			movement = (-1) * movement.normalized * 2f * Time.deltaTime;
-//			character.rigidBody.MovePosition (transform.localPosition - movement);
-//		}
+//	}
 
 
 	}
