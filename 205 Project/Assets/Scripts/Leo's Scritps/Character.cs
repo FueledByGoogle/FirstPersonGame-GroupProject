@@ -119,7 +119,6 @@ public class Character : MonoBehaviour {
 				healthBar.SetHealth (health, maxHealth);
 				//setting shield animation
 				if (anim != null) {
-					print ("brokeN");
 					anim.SetBool ("Defense_Broken", true);
 					anim.SetBool ("Shield_Up", false);
 				}

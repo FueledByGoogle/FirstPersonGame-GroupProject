@@ -21,6 +21,8 @@ public class Shield : MonoBehaviour {
 
 
 	public bool TakeDamage (float damage) {
+		if (shieldHitAudio.isPlaying)
+			shieldHitAudio.Stop ();
 		shieldHitAudio.Play ();
 		if (damage <= shieldDefenseValue) {
 			return false;
