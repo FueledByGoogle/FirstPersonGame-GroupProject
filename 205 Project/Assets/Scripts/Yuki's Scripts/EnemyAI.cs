@@ -23,7 +23,7 @@ public class EnemyAI : MonoBehaviour {
     public float viewRange;
     Vector3 inFront;
 
-    bool inLineSight;
+    public bool inLineSight;
 	bool canAttack;
 	float attackCooldown;
     Vector3 rayDir;
@@ -37,8 +37,6 @@ public class EnemyAI : MonoBehaviour {
         agent.autoBraking = false;
 		attackCooldown = 3f;
 		canAttack = true;
-		//GotoNextPoint();
-
 		tempHP = character.health;
     }
 
@@ -117,7 +115,7 @@ public class EnemyAI : MonoBehaviour {
 				GotoNextPoint();
 			}
 
-			if (inLineSight || distToPlayer < 2.2f)
+			if (inLineSight || distToPlayer < 1f)
 				attackPlayer();
 			
 			//Death
@@ -137,16 +135,14 @@ public class EnemyAI : MonoBehaviour {
 			inLineSight = true;
 		}
 
-		if (Time.time >= character.shieldCoolDownCounter) {
+		if (Time.time >= character.shieldCoolDownCounter && inLineSight) {
 			if (character.player.character.anim.GetCurrentAnimatorStateInfo (0).IsName ("Melee_Attack") && 
-				distToPlayer < attackDist) {
-
+				distToPlayer <= attackDist) {
+	
 				character.anim.SetBool ("Shield_Up", true);
 
-			} else if (distToPlayer < viewRange || inLineSight && character.player.usingBow) {
-
+			} else if (character.player.usingBow) {
 				character.anim.SetBool ("Shield_Up", true);
-
 			} else {
 				character.anim.SetBool ("Shield_Up", false);
 			}

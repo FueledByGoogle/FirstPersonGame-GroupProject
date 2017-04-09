@@ -29,11 +29,6 @@ public class Arrow : MonoBehaviour {
 		//we need to traverse to the root of the gameobject because that's where the character
 		//script is
 
-		Transform pos = coll.transform;
-		transform.parent = coll.transform;
-		coll.transform.position = pos.position;
-		transform.Translate (0.01f * Vector3.forward);	//moves arrow a bit into what it collided with for realism
-
 		Destroy (this.arrowCollider);
 
 		if (coll.gameObject.tag == "EnvironmentIgnore") {
@@ -52,9 +47,8 @@ public class Arrow : MonoBehaviour {
 				Destroy (gameObject);
 			} else {								//we want arrow to stick if it hits an enemy
 				characterHit.TakeDamage (damage);
-
-//				transform.parent = coll.transform;
-//				transform.Translate (0.01f * Vector3.forward);	//moves arrow a bit into what it collided with for realism
+				transform.parent = coll.transform;
+				transform.Translate (0.01f * Vector3.forward);	//moves arrow a bit into what it collided with for realism
 
 				arrowTrail.SetActive (false);
 			}
