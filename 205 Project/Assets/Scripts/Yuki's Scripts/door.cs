@@ -11,14 +11,12 @@ public class Door : MonoBehaviour {
 	public int nextRoom;
 	public bool cleared;
 
-	void Start ()
-	{
+	void Start () {
 		nextRoom = Random.Range (1, 3);
 		player = GameObject.Find ("MyCustomPlayer").GetComponent<PlayerController> ();
 	}	
 
-	void Update ()
-	{
+	void Update () {
 		if (enterText != null && enterText.activeSelf && Input.GetKey (KeyCode.E)) {
 			SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
 			player.roomsCleared += 1;
@@ -27,15 +25,13 @@ public class Door : MonoBehaviour {
 
 	}
 
-	void OnTriggerEnter (Collider other)
-	{
+	void OnTriggerEnter (Collider other) {
 		if (cleared && other.gameObject.transform.root.CompareTag ("Player")) {
 			enterText.SetActive (true);
 		}
 	}
 
-	void OnTriggerExit (Collider other)
-	{
+	void OnTriggerExit (Collider other) {
 		if (cleared && other.gameObject.transform.root.CompareTag ("Player")) {
 			enterText.SetActive (false);
 		}

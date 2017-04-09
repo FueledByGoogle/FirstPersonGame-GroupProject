@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour {
 
 		if (usingBow == false) {
 			SwordAttack ();
-			if (Time.time >= character.shieldCoolDown) {
+			if (Time.time >= character.shieldCoolDownCounter) {
 				Defense ();
 			}
 		}
@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour {
 
 		Movement ();
 		if (movementDisabled)
-			character.animator.SetBool ("Walking", false);
+			character.anim.SetBool ("Walking", false);
 	}
 		
 	void Bow() {
@@ -140,7 +140,7 @@ public class PlayerController : MonoBehaviour {
 					bow.Release ();
 					arrowDrawn = false;
 				}
-				//revert back to default F0W
+				//revert back to default FOW
 				if (bow.releasing == true) {
 					playerCamera.fieldOfView = 60f;
 					bowZoomed = false;
@@ -155,10 +155,10 @@ public class PlayerController : MonoBehaviour {
 	void Defense() {
 		
 		if (Input.GetMouseButton (1)) {
-			character.animator.SetBool ("Shield_Up", true);
-			character.animator.SetBool ("Defense_Broken", false);
+			character.anim.SetBool ("Shield_Up", true);
+			character.anim.SetBool ("Defense_Broken", false);
 		} else {
-			character.animator.SetBool ("Shield_Up", false);
+			character.anim.SetBool ("Shield_Up", false);
 		}
 	}
 
@@ -171,12 +171,12 @@ public class PlayerController : MonoBehaviour {
 		 */
 
 		if ((Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.A) ||
-		    Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) && character.isGrounded && !character.animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Hold_Defense"))
-			character.animator.SetBool ("Walking", true);
+		    Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.S)) && character.isGrounded && !character.anim.GetCurrentAnimatorStateInfo (0).IsName ("Player_Hold_Defense"))
+			character.anim.SetBool ("Walking", true);
 
 		if (Input.GetKeyUp (KeyCode.D) || Input.GetKeyUp (KeyCode.A) ||
 		    Input.GetKeyUp (KeyCode.W) || Input.GetKeyUp (KeyCode.S) || !character.isGrounded)
-			character.animator.SetBool ("Walking", false);
+			character.anim.SetBool ("Walking", false);
 
 //		if (character.isGrounded) {
 
@@ -194,10 +194,8 @@ public class PlayerController : MonoBehaviour {
 			} else if (Input.GetKey (KeyCode.S)) {			//Backwards Movement
 				character.Move (false);
 			} else {
-				character.animator.SetBool ("Walking", false);
-			}
-
-
+				character.anim.SetBool ("Walking", false);
+ 			}
 
 //	}
 
@@ -206,12 +204,12 @@ public class PlayerController : MonoBehaviour {
 
 	void SwordAttack () {
 		//MouseButtonDown b/c MouseButton refreshes too quickly and multiple swings will be inputed
-		if (!character.animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
+		if (!character.anim.GetCurrentAnimatorStateInfo (0).IsName ("Melee_Attack")) {
 			
 			sword.hasCollided = false;
 
-			if (Input.GetMouseButtonDown (0) && !character.animator.GetCurrentAnimatorStateInfo (0).IsName ("Player_Sword_Attack")) {
-				character.animator.SetTrigger ("Normal_Attack");
+			if (Input.GetMouseButtonDown (0) && !character.anim.GetCurrentAnimatorStateInfo (0).IsName ("Melee_Attack")) {
+				character.anim.SetTrigger ("Normal_Attack");
 			}
 		} 
 	

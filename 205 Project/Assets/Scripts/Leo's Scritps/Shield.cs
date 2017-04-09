@@ -4,39 +4,54 @@ using UnityEngine;
 
 public class Shield : MonoBehaviour {
 
+	public Character character;
+
 	AudioSource shieldHitAudio;
 	public float shieldDefenseValue;
-	public bool shieldHit;
 
 	public ParticleSystem shieldSpark;						
 	public float shieldCoolDown = 2f;	//Time before shield can be used again after failing to block damage
 
 
 	void Start() {
-		shieldHit = false;
+		character = transform.root.GetComponent<Character> ();
+	
 		shieldHitAudio = GetComponent<AudioSource> ();
 	}
 
+
 	public bool TakeDamage (float damage) {
 		shieldHitAudio.Play ();
-		if (damage <= shieldDefenseValue) {	//no damage should be taken if damage < shieldDefenseValue
+		if (damage <= shieldDefenseValue) {
 			return false;
 		} else {
-			return true;
+			return true;	
 		}
 	}
 
 	void OnTriggerEnter (Collider coll) {
-		shieldHit = true;
-
+		
 		if (coll.tag == "Weapon") {
 			shieldSpark.Stop ();
 			shieldSpark.Play ();
-		}
-	}
 
-	void OnTriggerExit (Collider coll) {
-		shieldHit = false;
+			//Below we stop animation of sword swing so sword doesn't pass through shield
+			//and start additional triggers
+			if (character != null) {
+				//I realized I probably should have named the class "Weapon" instead of sword
+				//so it would make sense when grabbing the script to see how much damage the
+				//weapon does
+				Sword swordHit = coll.GetComponent<Sword> ();
+				if (swordHit != null && (swordHit.swordDamage <= shieldDefenseValue)) {
+					Character tempChar = coll.transform.root.GetComponent<Character> ();
+					if (tempChar != null) {
+						tempChar.anim.Play ("Idle");
+					}
+
+				}
+			}
+
+		}
 	}
 
 }

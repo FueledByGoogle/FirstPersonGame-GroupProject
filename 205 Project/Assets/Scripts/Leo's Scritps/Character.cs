@@ -6,7 +6,7 @@ public class Character : MonoBehaviour {
 
 	public HealthBar healthBar;
 	public Rigidbody rigidBody;
-	public Animator animator;
+	public Animator anim;
 
 	public float maxHealth = 10f;
 	public float health;
@@ -16,7 +16,8 @@ public class Character : MonoBehaviour {
 
 	//Defense
 	public Shield shield;
-	public float shieldCoolDown;	//This will be set to a time in the future when the shield can be used again
+	public float shieldCoolDownCounter;	//This will be set to a time in the future when the shield can be used again
+
 
 	//Jumping
 	public Transform groundCheckTransformLeft;
@@ -26,21 +27,18 @@ public class Character : MonoBehaviour {
 	public float groundCheckDistance;
 	public float jumpSpeed = 150f;
 
-	public bool characterGettingHit;
-
+	public EnemyAI enemy;
+	public PlayerController player;
 
 	void Start () {
-		animator = GetComponent<Animator> ();
+		anim = GetComponent<Animator> ();
 		rigidBody = GetComponent<Rigidbody> ();
+		player = GameObject.Find ("MyCustomPlayer").GetComponent<PlayerController> ();
 		health = maxHealth;
-		shieldCoolDown = 0;
-		characterGettingHit = false;
+		shieldCoolDownCounter = 0;
+
 	}
 
-
-	void Update () {
-		characterGettingHit = false;
-	}
 
 	void FixedUpdate () {
 		if (groundCheckTransformLeft != null && groundCheckTransformRight != null && groundCheckTransformMiddle != null) {
@@ -106,10 +104,11 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	public void TakeDamage (float damage){
+	public void TakeDamage (float damage) {
 
-		if (shield != null && animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Hold_Defense") &&
-			shield.shieldHit) {
+
+		//TODO: find way to tell if shield is currently colliding
+		if (shield != null && anim.GetCurrentAnimatorStateInfo(0).IsName("Hold_Defense")) {
 
 			if (shield.TakeDamage (damage)) {	//take damage
 				//setting health
@@ -119,27 +118,33 @@ public class Character : MonoBehaviour {
 				}
 				healthBar.SetHealth (health, maxHealth);
 				//setting shield animation
-				if (animator != null) {
-					animator.SetBool ("Defense_Broken", true);
-					animator.SetBool ("Shield_Up", false);
+				if (anim != null) {
+					print ("brokeN");
+					anim.SetBool ("Defense_Broken", true);
+					anim.SetBool ("Shield_Up", false);
 				}
-				shieldCoolDown = Time.time + shield.shieldCoolDown;
+				shieldCoolDownCounter = Time.time + shield.shieldCoolDown;
 
 			} else {							//ignore damage
-				shieldCoolDown = Time.time + shield.shieldCoolDown;
-				animator.SetBool ("Shield_Up", false);
-				animator.SetBool ("Defense_Broken", false);
+				shieldCoolDownCounter = Time.time + shield.shieldCoolDown;
+				anim.SetBool ("Shield_Up", false);
+				anim.SetBool ("Defense_Broken", false);
 			}
 
 		} else {
+
 			health -= damage;
 			if (health < 0) {
 				health = 0;
 			}
 			healthBar.SetHealth (health, maxHealth);
 
-			characterGettingHit = true;
-
+			//for the npc, if npc isn't attacking then trigger take damage animation
+			if (enemy != null) {
+				if (!anim.GetCurrentAnimatorStateInfo (0).IsName ("Enemy_Attack")) {
+					anim.SetTrigger ("TakingDamage");
+				}
+			}
 		}
 	}
 
@@ -149,10 +154,6 @@ public class Character : MonoBehaviour {
 			health = maxHealth;
 		}
 		healthBar.SetHealth (health, maxHealth);
-		/*IMPORTANT CHANGE!!!!!!
-		* Added healthBar.SetHealth (health, maxHealth); where there was none
-		*/
-		
 	}
 
 	public bool GroundCheck () {

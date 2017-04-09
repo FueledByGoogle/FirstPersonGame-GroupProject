@@ -6,7 +6,7 @@ public class Sword : MonoBehaviour {
 
 	public AudioSource swordSwingAudio;
 
-	public int swordDamage;
+	public float swordDamage;
 	public bool hasCollided;	//used to prevent multiple hits from being registered in one swing
 								//hascollided needs to be set to false when not swinging sword
 

@@ -11,7 +11,6 @@ public class EnemyAI : MonoBehaviour {
 	private Transform playerPos;
 	private GameObject player;
 	//NPC properties
-	private Animator anim;
 	public Character character;
 	public Sword sword;
 	//navigation
@@ -29,16 +28,18 @@ public class EnemyAI : MonoBehaviour {
 	float attackCooldown;
     Vector3 rayDir;
 
+	public float tempHP;
 
 	void Start() {
         agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
 		character = GetComponent<Character> ();
         player = GameObject.Find("MyCustomPlayer");
-		anim = GetComponent<Animator> ();
         agent.autoBraking = false;
 		attackCooldown = 3f;
 		canAttack = true;
 		//GotoNextPoint();
+
+		tempHP = character.health;
     }
 
 
@@ -56,6 +57,7 @@ public class EnemyAI : MonoBehaviour {
     }
 
     void attackPlayer() {
+		
         if (distToPlayer >= attackDist) {
             agent.Resume();
             agent.destination = player.transform.position;
@@ -74,7 +76,7 @@ public class EnemyAI : MonoBehaviour {
 
 			if (canAttack) {
 				canAttack = false;
-				anim.SetTrigger ("isAttacking");
+				character.anim.SetTrigger ("isAttacking");
 			}
 
         }
@@ -106,7 +108,7 @@ public class EnemyAI : MonoBehaviour {
 					canAttack = true;
 				}
 			}
-			if (!anim.GetCurrentAnimatorStateInfo (0).IsName ("Enemy_Attack")) {
+			if (!character.anim.GetCurrentAnimatorStateInfo (0).IsName ("Enemy_Attack")) {
 				sword.hasCollided = false;
 			}
 			// Choose the next destination point when the agent gets
@@ -118,12 +120,15 @@ public class EnemyAI : MonoBehaviour {
 			if (inLineSight || distToPlayer < 2.2f)
 				attackPlayer();
 			
-			//DEATH
-			if (character.health <= 0 && anim.enabled) {
+			//Death
+			if (character.health <= 0 && character.anim.enabled) {
 				combatRoomManager.numOfEnemies -= 1;
-				anim.Stop ();
-				anim.Rebind ();
-				anim.enabled = false;
+				character.anim.Stop ();	  //have to stop animation after player head detaches otherwise buggy
+				character.anim.Rebind (); //then we rebind so the animation plays without the head
+				character.anim.enabled = false;
+				
+				character.rigidBody.AddForce (new Vector3 (100f, 0f, 0f)); //so body falls down
+				
 				agent.enabled = false;
 			}
 		}
@@ -132,7 +137,20 @@ public class EnemyAI : MonoBehaviour {
 			inLineSight = true;
 		}
 
+		if (Time.time >= character.shieldCoolDownCounter) {
+			if (character.player.character.anim.GetCurrentAnimatorStateInfo (0).IsName ("Melee_Attack") && 
+				distToPlayer < attackDist) {
 
+				character.anim.SetBool ("Shield_Up", true);
+
+			} else if (distToPlayer < viewRange || inLineSight && character.player.usingBow) {
+
+				character.anim.SetBool ("Shield_Up", true);
+
+			} else {
+				character.anim.SetBool ("Shield_Up", false);
+			}
+		}
 
     }   
 }
