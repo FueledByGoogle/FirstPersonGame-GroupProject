@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 
 	public Camera playerCamera;
 	public Character character;
+	private static PlayerController inst;
 
 	public Text highscoreText;
 	public int highscore;
@@ -35,7 +36,12 @@ public class PlayerController : MonoBehaviour {
 	public Sword sword;
 
 	void Start () {
-		DontDestroyOnLoad (this);
+		if (inst == null) {
+			inst = this;
+			DontDestroyOnLoad (gameObject);
+		} else {
+			Destroy (gameObject);
+		}
 		character = GetComponent<Character> ();
 		movementDisabled = false;
 		roomsCleared = 0;
