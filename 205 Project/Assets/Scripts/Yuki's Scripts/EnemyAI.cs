@@ -41,13 +41,12 @@ public class EnemyAI : MonoBehaviour {
 		tempHP = character.health;
 		inLineSight = false;
 
+		GotoNextPoint ();
     }
 
 	void Update() {
 
-		print (distToPlayer);
-
-
+		//print (distToPlayer);
 
 		if (agent.enabled) {
 
@@ -66,10 +65,7 @@ public class EnemyAI : MonoBehaviour {
 			if (agent.remainingDistance < 0.5f && !inLineSight) {
 				GotoNextPoint();
 			}
-
-			if (inLineSight || distToPlayer < 1f)
-				attackPlayer();
-
+				
 			//Death
 			if (character.health <= 0 && character.anim.enabled) {
 				combatRoomManager.numOfEnemies -= 1;
@@ -115,18 +111,23 @@ public class EnemyAI : MonoBehaviour {
 
 			inLineSight = true;
 		}	
+
+		if (inLineSight || distToPlayer < 1f) {
+			attackPlayer ();
+		}
+
 	}
 
     void GotoNextPoint() {
         // Returns if no points have been set up
-        if (points.Length == 0)
-            return;
-		
+		if (points.Length == 0) {
+			return;
+		}
         // Set the agent to go to the currently selected destination.
         agent.destination = points[destPoint].position;
 
         // Choose the next point in the array as the destination,
-        // cycling to the start if necessary.
+        // going back to the start if necessary.
         destPoint = (destPoint + 1) % points.Length;
     }
 
