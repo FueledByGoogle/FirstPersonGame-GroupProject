@@ -19,10 +19,14 @@ public class CombatRoomManager : MonoBehaviour {
 	void Start() {
 		
 		player = GameObject.Find("MyCustomPlayer").GetComponent<PlayerController> ();
+
+		if(player == null)
+			print ("player is null");
+
 		if (player != null) {
 //			numOfEnemies = player.roomsCleared * 2;
 //			if (numOfEnemies > 5) {
-				numOfEnemies = 5;
+				numOfEnemies = 1;
 //			}
 			spawnedNPC = new GameObject[numOfEnemies];
 			spawnedNPCScript = new EnemyAI[numOfEnemies];	//need this to set waypoints
@@ -48,21 +52,20 @@ public class CombatRoomManager : MonoBehaviour {
 			StartCoroutine(Wait());
 		}
 
-		if (!seen) {	//if one npc gets hit then everyone comes after the player
+		if (!seen) {	//if one npc gets hit then all npcs currently spawned will go after player
 			for (int i = 0; i < numOfEnemies; i++) {
 				if (spawnedNPCScript [i].inLineSight) {
 					seen = true;
 					break;
 				}
 			}
-			if (seen) {
-				for (int i = 0; i < numOfEnemies; i++) {
-					spawnedNPCScript [i].inLineSight = true;
-				}
-			}
 		}
 
-
+		if (seen) {
+			for (int i = 0; i < numOfEnemies; i++) {
+				spawnedNPCScript [i].inLineSight = true;
+			}
+		}
 	}
 
 

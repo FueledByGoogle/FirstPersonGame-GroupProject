@@ -21,9 +21,7 @@ public class Shield : MonoBehaviour {
 
 
 	public bool TakeDamage (float damage) {
-		if (shieldHitAudio.isPlaying)
-			shieldHitAudio.Stop ();
-		shieldHitAudio.Play ();
+
 		if (damage <= shieldDefenseValue) {
 			return false;
 		} else {
@@ -32,8 +30,13 @@ public class Shield : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider coll) {
-		
+
 		if (coll.tag == "Weapon") {
+
+			if (!shieldHitAudio.isPlaying) {
+				shieldHitAudio.Play ();
+			}
+
 			shieldSpark.Stop ();
 			shieldSpark.Play ();
 

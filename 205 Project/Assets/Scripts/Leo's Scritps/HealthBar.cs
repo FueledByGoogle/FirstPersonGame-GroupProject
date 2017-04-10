@@ -5,7 +5,7 @@ using UnityEngine;
 public class HealthBar : MonoBehaviour {
 
 	public GameObject healthBar;
-	public GameObject playerPos;
+	private GameObject playerPos;
 
 	void Start () {
 		playerPos = GameObject.FindGameObjectWithTag ("Player");

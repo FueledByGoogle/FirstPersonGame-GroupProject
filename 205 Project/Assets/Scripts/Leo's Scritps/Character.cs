@@ -133,17 +133,21 @@ public class Character : MonoBehaviour {
 		} else {
 
 			health -= damage;
-			if (health < 0) {
+			if (health <= 0) {
 				health = 0;
+				healthBar.gameObject.SetActive (false);	//stop displaying healthbar
 			}
 			healthBar.SetHealth (health, maxHealth);
 
 			//for the npc, if npc isn't attacking then trigger take damage animation
-			if (enemy != null) {
-				if (!anim.GetCurrentAnimatorStateInfo (0).IsName ("Enemy_Attack")) {
-					anim.SetTrigger ("TakingDamage");
-				}
+			if (enemy != null													&&
+				!anim.GetCurrentAnimatorStateInfo (0).IsName ("Enemy_Attack") 	&& 
+				!anim.GetCurrentAnimatorStateInfo (0).IsName ("Defense_Broken") && 
+				!anim.GetCurrentAnimatorStateInfo (0).IsName ("Hold_Defense")	) {
+
+				anim.SetTrigger ("TakingDamage");
 			}
+
 		}
 	}
 
