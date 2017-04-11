@@ -8,19 +8,25 @@ public class floorGenerator : MonoBehaviour {
 	public GameObject entrance;
 	public GameObject exit;
 	public GameObject floorTile;
+	public GameObject target;
+	public Door door;
+	public GameObject[] targetSpawnPos;
 
 	float dist2Exit;
 	float numOfFloors;
 	float[] floorLoc;
+
+	private int numTargets;
 	// Use this for initialization
 	void Start () {
 		dist2Exit = Vector3.Distance (entrance.transform.position, exit.transform.position);
 		numOfFloors = Mathf.Floor(dist2Exit / 1.5f); //1.5f is the length of the floor tiles
 		floorLoc = new float[(int) numOfFloors];
 		generateFloors();
+		generateTargets();
 	}
 
-	void update(){
+	void Update(){
 		if (Input.GetKeyDown(KeyCode.P)) {
 			SceneManager.LoadScene (3, LoadSceneMode.Single);
 		}
@@ -47,12 +53,27 @@ public class floorGenerator : MonoBehaviour {
 					runAvg [k] = 0;
 				}
 				avg = avg + runAvg [k];
-
 			}
 			floorLoc[i] = avg / 3;
 			runAvg [0] = runAvg [2];
 
 
+		}
+	}
+
+	void generateTargets(){
+		numTargets = Random.Range (2, 7);
+		int pos = 0;
+		for(int i = 0; i < numTargets; i++){			
+			Instantiate (target, targetSpawnPos[pos].transform.position, targetSpawnPos[pos].transform.rotation);
+			pos++;
+		}
+	}
+
+	public void targetHit(){
+		numTargets--;
+		if(numTargets <= 0){
+			door.cleared = true;
 		}
 	}
 }
