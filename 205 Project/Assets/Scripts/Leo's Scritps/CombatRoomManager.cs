@@ -13,7 +13,7 @@ public class CombatRoomManager : MonoBehaviour {
 	public int numOfEnemies;
 	public Door door;
 
-	private bool spawned;
+	private int numOfEnemiesToSpawn;
 	private bool seen;
 
 	void Start() {
@@ -24,10 +24,12 @@ public class CombatRoomManager : MonoBehaviour {
 			print ("player is null");
 
 		if (player != null) {
-//			numOfEnemies = player.roomsCleared * 2;
-//			if (numOfEnemies > 5) {
-				numOfEnemies = 1;
-//			}
+			numOfEnemies = player.roomsCleared * 2;
+			if (numOfEnemies > 5) {
+				numOfEnemies = 5;
+
+			}
+			numOfEnemiesToSpawn = numOfEnemies;
 			spawnedNPC = new GameObject[numOfEnemies];
 			spawnedNPCScript = new EnemyAI[numOfEnemies];	//need this to set waypoints
 			//we want to spawn enemies every 2 seconds
@@ -39,21 +41,21 @@ public class CombatRoomManager : MonoBehaviour {
 				spawnedNPC [i].SetActive (false);	//deactivating them so we can spawn them later in update in intervals
 			}
 		}
-		spawned = false;
 	}
 
 	void Update () {
+
 
 		if (numOfEnemies <= 0) {
 			door.cleared = true;
 		}
 
-		if (spawned == false) { //only spawn once
-			StartCoroutine(Wait());
-		}
+
+		StartCoroutine(Wait());
+
 
 		if (!seen) {	//if one npc gets hit then all npcs currently spawned will go after player
-			for (int i = 0; i < numOfEnemies; i++) {
+			for (int i = 0; i < numOfEnemiesToSpawn; i++) {
 				if (spawnedNPCScript [i].inLineSight) {
 					seen = true;
 					break;
@@ -62,7 +64,7 @@ public class CombatRoomManager : MonoBehaviour {
 		}
 
 		if (seen) {
-			for (int i = 0; i < numOfEnemies; i++) {
+			for (int i = 0; i < numOfEnemiesToSpawn; i++) {
 				spawnedNPCScript [i].inLineSight = true;
 			}
 		}
@@ -70,10 +72,11 @@ public class CombatRoomManager : MonoBehaviour {
 
 
 	IEnumerator Wait() {
-		for (int i = 0; i < numOfEnemies; i++) {
-			spawnedNPC [i].SetActive (true);
+		for (int i = 0; i < numOfEnemiesToSpawn; i++) {
+			if (!spawnedNPC [i].activeSelf) {
+				spawnedNPC [i].SetActive (true);
+			}
 			yield return new WaitForSeconds (3);
 		}
-		spawned = true;
 	}
 }

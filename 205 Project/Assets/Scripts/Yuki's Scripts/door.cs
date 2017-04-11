@@ -12,13 +12,14 @@ public class Door : MonoBehaviour {
 	public bool cleared;
 
 	void Start () {
-		nextRoom = Random.Range (1, 1);
+		nextRoom = Random.Range (1, 5);
 		player = GameObject.Find ("MyCustomPlayer").GetComponent<PlayerController> ();
 	}	
 
 	void Update () {
 		if (enterText != null && enterText.activeSelf && Input.GetKey (KeyCode.E)) {
-			SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
+//			SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
+			SceneManager.LoadScene (1, LoadSceneMode.Single);
 			player.roomsCleared += 1;
 			player.roomsClearedText.text = ("Rooms Cleared: " + player.roomsCleared);
 		}
