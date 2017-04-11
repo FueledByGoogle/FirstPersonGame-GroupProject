@@ -9,11 +9,10 @@ public class RandomLevelMaze : MonoBehaviour {
 	public GameObject roof;
 	public GameObject[] trapMazeSettings;
 
-
 	// Use this for initialization
 	void Start () {
-		//Random.InitState(75);
-		int rand =  Random.Range (0, 3);
+	//	Random.InitState(20);
+		int rand =  Random.Range (0, 5);
 		trapMazeSettings[rand].SetActive(true);
 		roof.SetActive(true);
 	}
