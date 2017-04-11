@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovingTarget : MonoBehaviour {
+public class MovingArcheryTarget : MonoBehaviour {
+
 
 	public float startRangex = -2.0f;
 	public float endRangex = 2.0f;
