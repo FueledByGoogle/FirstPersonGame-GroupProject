@@ -14,11 +14,15 @@ public class CombatRoomManager : MonoBehaviour {
 	public Door door;
 
 	private int numOfEnemiesToSpawn;
+
 	private bool seen;
+	private float timeToNextSpawn;
+	private float spawnCooldownTime;
 
 	void Start() {
-		
 		player = GameObject.Find("MyCustomPlayer").GetComponent<PlayerController> ();
+		spawnCooldownTime = 2f;
+		timeToNextSpawn = 0;
 
 		if(player == null)
 			print ("player is null");
@@ -51,7 +55,14 @@ public class CombatRoomManager : MonoBehaviour {
 		}
 
 
-		StartCoroutine(Wait());
+		for (int i = 0; i < numOfEnemiesToSpawn; i++) {
+			if (Time.time > timeToNextSpawn) {
+				if (!spawnedNPC [i].activeSelf) {
+					spawnedNPC [i].SetActive (true);
+					timeToNextSpawn = Time.time + spawnCooldownTime;
+				}
+			}
+		}
 
 
 		if (!seen) {	//if one npc gets hit then all npcs currently spawned will go after player
@@ -70,13 +81,4 @@ public class CombatRoomManager : MonoBehaviour {
 		}
 	}
 
-
-	IEnumerator Wait() {
-		for (int i = 0; i < numOfEnemiesToSpawn; i++) {
-			if (!spawnedNPC [i].activeSelf) {
-				spawnedNPC [i].SetActive (true);
-			}
-			yield return new WaitForSeconds (3);
-		}
-	}
 }

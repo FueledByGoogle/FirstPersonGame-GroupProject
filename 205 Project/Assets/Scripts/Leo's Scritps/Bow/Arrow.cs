@@ -29,7 +29,7 @@ public class Arrow : MonoBehaviour {
 		//we need to traverse to the root of the gameobject because that's where the character
 		//script is
 
-		Destroy (this.arrowCollider);
+
 
 		if (coll.gameObject.tag == "EnvironmentIgnore") {
 			Physics.IgnoreCollision(coll, arrowCollider);
@@ -55,6 +55,7 @@ public class Arrow : MonoBehaviour {
 		} else {							
 			Destroy (gameObject, 3f);
 		}
+		Destroy (this.arrowCollider);
 	
 	}
 }

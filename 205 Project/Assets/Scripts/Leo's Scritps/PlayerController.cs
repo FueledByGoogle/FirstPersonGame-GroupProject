@@ -220,4 +220,11 @@ public class PlayerController : MonoBehaviour {
 		} 
 	
 	}
+
+	void OnTriggerEnter (Collider coll) {
+		
+		if (coll.tag == "TriggerEnvironment") {
+			
+		}
+	}
 }

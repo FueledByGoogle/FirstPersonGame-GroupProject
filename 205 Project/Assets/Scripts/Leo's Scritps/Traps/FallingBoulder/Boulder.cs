@@ -3,9 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Boulder : MonoBehaviour {
+	
+	private bool collided;
 
 	public float damage = 3;
 	public Collider boulderCollider;
+
+	public float timer;
+	public float timeBeforeInactive = 2f;
+
+	void Start () {
+		collided = false;
+	}
+
+	void Update () {
+		if (Time.time > timer && gameObject.activeSelf && collided) {
+			this.gameObject.SetActive (false);
+		}
+	}
 
 	void OnTriggerEnter (Collider col) {
 
@@ -23,12 +38,9 @@ public class Boulder : MonoBehaviour {
 	}
 
 	void OnCollisionEnter (Collision col) {
-		StartCoroutine (Wait());
+		collided = true;
+		timer = Time.time + timeBeforeInactive;
 	}
 
-	IEnumerator Wait () {
-		yield return new WaitForSeconds (2f);
-		this.gameObject.SetActive (false);
-	}
 
 }
