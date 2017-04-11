@@ -62,7 +62,7 @@ public class floorGenerator : MonoBehaviour {
 	}
 
 	void generateTargets(){
-		numTargets = Random.Range (2, 7);
+		numTargets = Random.Range (2, 6);
 		int pos = 0;
 		for(int i = 0; i < numTargets; i++){			
 			Instantiate (target, targetSpawnPos[pos].transform.position, targetSpawnPos[pos].transform.rotation);
