@@ -74,8 +74,7 @@ public class EnemyAI : MonoBehaviour {
 				character.anim.enabled = false;
 
 				character.rigidBody.AddForce (new Vector3 (100f, 0f, 0f)); //so body falls down
-
-				agent.enabled = false;
+				agent.enabled = false;	//disable navigation
 			}
 		}
 
@@ -101,21 +100,22 @@ public class EnemyAI : MonoBehaviour {
 	void FixedUpdate() {
 		RaycastHit hit;
 
-		distToPlayer = Vector3.Distance(player.transform.position, transform.position);
-		rayDir = player.transform.position - transform.position;
+		if (agent.enabled) {
+			distToPlayer = Vector3.Distance(player.transform.position, transform.position);
+			rayDir = player.transform.position - transform.position;
 
-		if ((distToPlayer < viewRange) 										  && 
-			(Vector3.Angle(rayDir, transform.forward) < fieldOfViewRange) 	  &&
-			(Physics.Raycast (transform.position, rayDir, out hit, viewRange) &&
-				hit.transform.tag == "Player")										) {
+			if ((distToPlayer < viewRange) 										  && 
+				(Vector3.Angle(rayDir, transform.forward) < fieldOfViewRange) 	  &&
+				(Physics.Raycast (transform.position, rayDir, out hit, viewRange) &&
+					hit.transform.tag == "Player")										) {
 
-			inLineSight = true;
-		}	
+				inLineSight = true;
+			}	
 
-		if (inLineSight || distToPlayer < 1f) {
-			attackPlayer ();
+			if (inLineSight || distToPlayer < 1f) {
+				attackPlayer ();
+			}
 		}
-
 	}
 
     void GotoNextPoint() {
@@ -131,7 +131,7 @@ public class EnemyAI : MonoBehaviour {
         destPoint = (destPoint + 1) % points.Length;
     }
 
-    void attackPlayer() {
+    void attackPlayer () {
 
         if (distToPlayer >= attackDist) {
             agent.Resume();

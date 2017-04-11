@@ -12,7 +12,7 @@ public class Door : MonoBehaviour {
 	public bool cleared;
 
 	void Start () {
-		nextRoom = Random.Range (1, 1);
+		nextRoom = Random.Range (1, 5);
 		player = GameObject.Find ("MyCustomPlayer").GetComponent<PlayerController> ();
 	}	
 
