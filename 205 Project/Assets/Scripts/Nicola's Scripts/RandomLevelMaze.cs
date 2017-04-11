@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RandomLevelMaze : MonoBehaviour {
 
@@ -12,20 +13,14 @@ public class RandomLevelMaze : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		//Random.InitState(75);
-		float rand = Random.value;
-		int index = 0;
-		if(rand > 0.7f){
-			index = 2;
-		}
-		else if(rand < 0.3f){
-			index = 0;
-		}
-		else{
-			index = 1;
-		}
-		trapMazeSettings[0].SetActive(true);
+		int rand =  Random.Range (0, 3);
+		trapMazeSettings[rand].SetActive(true);
 		roof.SetActive(true);
 	}
 	
-
+	void Update(){
+		if (Input.GetKeyDown(KeyCode.P)) {
+			SceneManager.LoadScene (4, LoadSceneMode.Single);
+		}
+	}
 }
