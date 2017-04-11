@@ -23,7 +23,7 @@ public class RandomLevelMaze : MonoBehaviour {
 		else{
 			index = 1;
 		}
-		trapMazeSettings[index].SetActive(true);
+		trapMazeSettings[0].SetActive(true);
 		roof.SetActive(true);
 	}
 	

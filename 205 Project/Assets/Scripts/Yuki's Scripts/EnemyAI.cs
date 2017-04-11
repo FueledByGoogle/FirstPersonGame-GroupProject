@@ -18,7 +18,7 @@ public class EnemyAI : MonoBehaviour {
 	private NavMeshAgent agent;
 	private float distToPlayer;
     public float attackDist;
-    public float fieldOfViewRange;				//field of view in degrees
+    public float fieldOfViewRange; //field of view in degrees
     public float RotationSpeed;
     public float viewRange;
     Vector3 inFront;
@@ -119,15 +119,13 @@ public class EnemyAI : MonoBehaviour {
 	}
 
     void GotoNextPoint() {
-        // Returns if no points have been set up
+        // Exit if there are no destination points
 		if (points.Length == 0) {
 			return;
 		}
         // Set the agent to go to the currently selected destination.
         agent.destination = points[destPoint].position;
-
-        // Choose the next point in the array as the destination,
-        // going back to the start if necessary.
+        // Chooses next destination point in array
         destPoint = (destPoint + 1) % points.Length;
     }
 
@@ -141,11 +139,9 @@ public class EnemyAI : MonoBehaviour {
 			agent.Stop ();
             //find the vector pointing from our position to the target
 			Vector3 direction = rayDir.normalized;
-
             //create the rotation we need to be in to look at the target
 			Quaternion lookRotation = Quaternion.LookRotation(direction);
-
-            //rotate us over time according to speed until we are in the required rotation
+            //rotates over time to specified rotation
             transform.rotation = Quaternion.Slerp (transform.rotation, lookRotation, Time.deltaTime * RotationSpeed);
             transform.rotation = Quaternion.Euler (0, transform.rotation.eulerAngles.y, 0); //locks z & x rotations
 
