@@ -18,8 +18,7 @@ public class Door : MonoBehaviour {
 
 	void Update () {
 		if (enterText != null && enterText.activeSelf && Input.GetKey (KeyCode.E)) {
-//			SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
-			SceneManager.LoadScene (1, LoadSceneMode.Single);
+			SceneManager.LoadScene (nextRoom, LoadSceneMode.Single);
 			player.roomsCleared += 1;
 			player.roomsClearedText.text = ("Rooms Cleared: " + player.roomsCleared);
 		}
