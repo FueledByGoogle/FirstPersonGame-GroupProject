@@ -29,8 +29,8 @@ public class CombatRoomManager : MonoBehaviour {
 
 		if (player != null) {
 			numOfEnemies = player.roomsCleared * 2;
-			if (numOfEnemies > 5) {
-				numOfEnemies = 5;
+			if (numOfEnemies > 3) {
+				numOfEnemies = 3;
 
 			}
 			numOfEnemiesToSpawn = numOfEnemies;

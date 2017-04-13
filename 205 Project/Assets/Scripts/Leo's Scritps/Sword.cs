@@ -25,9 +25,13 @@ public class Sword : MonoBehaviour {
 			hasCollided = true;
 			Character characterHit = col.gameObject.transform.root.GetComponent<Character> ();
 
-			if (characterHit != null) {
-				characterHit.TakeDamage (swordDamage);
+			if (this.gameObject.transform.root.tag != col.gameObject.transform.root.tag) {
+				if (characterHit != null) {
+					characterHit.TakeDamage (swordDamage);
+				}
 			}
+
+
 		}
 	}
 

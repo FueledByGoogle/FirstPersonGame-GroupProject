@@ -23,16 +23,14 @@ public class MovTarget : MonoBehaviour {
 			float temp = Random.Range (originWorld.x - moveDistance, originWorld.x + moveDistance);
 			transform.position = new Vector3 (temp, transform.position.y, transform.position.z);
 
-
-
 			tempTime = Time.time + timeToChangePos;
 		}
-
-
-		Debug.DrawLine(originWorld, transform.position, Color.red);
-
+//		Debug.DrawLine(originWorld, transform.position, Color.red);
 	}
 
+	void OnTriggerEnter () {
+		this.gameObject.SetActive (false);
+	}
 
 
 		
